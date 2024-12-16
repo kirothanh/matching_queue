@@ -3,6 +3,8 @@ import PrivateRoute from "./routes/privateRoute";
 import PublicRoute from "./routes/publicRoute";
 import Dashboard from "./pages/Dashboard";
 import { lazy } from "react";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const LoginPage = lazy(() => import("./pages/Login"));
 const RegisterPage = lazy(() => import("./pages/Register"));
@@ -19,5 +21,8 @@ export default function App() {
 
   let element = useRoutes(menu);
 
-  return element;
+  return <>
+    {element}
+    <ToastContainer position="top-right" autoClose={3000} />
+  </>;
 }

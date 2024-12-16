@@ -2,6 +2,8 @@ import { useNavigate } from "react-router-dom";
 import AdminLayout from "../layouts/AdminLayout";
 import SuperAdminLayout from "../layouts/SuperAdminLayout";
 import GuestLayout from "../layouts/GuestLayout";
+import { authMiddleware } from "../utils/authMiddleware";
+import { useEffect } from "react";
 
 const renderLayout = (role, element) => {
   switch (role) {
@@ -17,13 +19,19 @@ const renderLayout = (role, element) => {
 /* eslint-disable react/prop-types */
 export default function PrivateRoute({ element }) {
   const role = "user";
-  const isLogin = true;
+  const isLogin = authMiddleware();
   // const expiredLogin = false;
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isLogin) {
+      navigate("/login");
+    }
+  }, [isLogin, navigate]);
 
   return isLogin ? (
     <div>{renderLayout(role, element)}</div>
   ) : (
-    navigate.redirect("/login")
+    navigate("/login")
   );
 }

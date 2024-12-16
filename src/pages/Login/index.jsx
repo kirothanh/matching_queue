@@ -1,6 +1,35 @@
+import { useForm } from "react-hook-form";
 import { IoIosCheckmarkCircle } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
+import authorizedAxiosInstance from "../../utils/authorizedAxios";
+import { toast } from "react-toastify";
+import { localStorageSetup } from "../../utils/localStorageSetup";
 
 export default function Login() {
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    defaultValues: {
+      name: '',
+      password: '',
+    }
+  });
+  const navigate = useNavigate()
+
+  const submitLogin = async (data) => {
+    try {
+      const res = await authorizedAxiosInstance.post(`/auth/login`, data);
+      if (res.data.success === false) {
+        toast.error(res.data.message)
+      } else {
+        console.log("first: ", res.data.data)
+        localStorageSetup(res.data.data)
+        toast.success("Đăng nhập thành công !")
+        navigate("/")
+      }
+    } catch (error) {
+      console.error("Login failed 123123: ", error.response?.data || error.message);
+    }
+  }
+
   return (
     <div className="max-w-screen-xl px-4 py-8 mx-auto lg:grid lg:gap-20 lg:py-16 lg:grid-cols-12 h-screen">
       <div className="flex-col justify-between hidden col-span-6 mr-auto lg:flex xl:mb-0">
@@ -11,10 +40,10 @@ export default function Login() {
           >
             <img
               src="/img/logo.svg"
-              alt="Sporta"
+              alt="Matching Queue"
               className="w-10 h-10 mr-2"
             />
-            Sporta
+            Matching Queue
           </a>
           <div className="flex">
             <IoIosCheckmarkCircle
@@ -95,10 +124,10 @@ export default function Login() {
         >
           <img
             src="/img/logo.svg"
-            alt="Sporta"
+            alt="Matching Queue"
             className="w-10 h-10 mr-2"
           />
-          Sporta
+          Matching Queue
         </a>
       </div>
       <div className="w-full col-span-6 mx-auto bg-white rounded-lg shadow md:mt-0 sm:max-w-lg xl:p-0">
@@ -111,7 +140,7 @@ export default function Login() {
             <div className="px-5 text-center text-gray-500">or</div>
             <div className="w-full h-0.5 bg-gray-200"></div>
           </div>
-          <form action="" className="space-y-4 lg:space-y-6">
+          <form onSubmit={handleSubmit(submitLogin)} className="space-y-4 lg:space-y-6">
             <div>
               <label
                 htmlFor="user_email"
@@ -121,10 +150,19 @@ export default function Login() {
               </label>
               <input
                 type="email"
-                className="bg-gray-50 border-2 outline-none border-gray-300 text-gray-900 rounded-lg focus:ring-[#b37f45] focus:border-[#b37f45] block w-full p-2.5"
+                className={`bg-gray-50 border-2 outline-none text-gray-900 rounded-lg block w-full p-2.5 ${errors.email ? "border-red-500" : "border-gray-300 focus:border-[#b37f45]"
+                  }`}
                 placeholder="Email"
                 id="user_email"
+                {...register("email", {
+                  required: "Email không được để trống",
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "Email không đúng định dạng",
+                  },
+                })}
               />
+              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
             </div>
             <div>
               <label
@@ -135,10 +173,19 @@ export default function Login() {
               </label>
               <input
                 type="password"
-                className="bg-gray-50 border-2 outline-none border-gray-300 text-gray-900 rounded-lg focus:ring-[#b37f45] focus:border-[#b37f45] block w-full p-2.5"
+                className={`bg-gray-50 border-2 outline-none text-gray-900 rounded-lg block w-full p-2.5 ${errors.password ? "border-red-500" : "border-gray-300 focus:border-[#b37f45]"
+                  }`}
                 placeholder="••••••••"
                 id="user_password"
+                {...register("password", {
+                  required: "Mật khẩu không được để trống",
+                  minLength: {
+                    value: 6,
+                    message: "Mật khẩu phải có ít nhất 6 ký tự",
+                  },
+                })}
               />
+              {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-start">
@@ -146,7 +193,7 @@ export default function Login() {
                   <input name="user[remember_me]" type="hidden" value="0" />
                   <input
                     className="text-[#b67e3a] w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:bg-[#b37f45] focus:ring-[#b37f45] checked:bg-[#b37f45] cursor-pointer"
-                    required="required"
+                    // required="required"
                     type="checkbox"
                     value="1"
                     name="user[remember_me]"
