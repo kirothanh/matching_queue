@@ -31,7 +31,5 @@ export default function PrivateRoute({ element }) {
 
   return isLogin ? (
     <div>{renderLayout(role, element)}</div>
-  ) : (
-    navigate("/login")
-  );
+  ) : null;
 }

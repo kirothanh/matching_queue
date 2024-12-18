@@ -10,7 +10,7 @@ export default function Register() {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const submitRegister = async (data) => {
     try {
@@ -19,11 +19,11 @@ export default function Register() {
         data
       );
       if (res.data.success === false) {
-        toast.error(res.data.message)
+        toast.error(res.data.message);
       } else {
-        localStorageSetup(res.data.data)
+        localStorageSetup(res.data.data);
         toast.success("Đăng ký thành công!");
-        navigate("/")
+        navigate("/");
       }
     } catch (error) {
       console.error("Error:", error);
@@ -33,13 +33,17 @@ export default function Register() {
 
   return (
     <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-      <a
-        href="/"
-        className="flex items-center mb-6 text-3xl font-semibold text-gray-900"
+      <div
+        onClick={() => navigate("/")}
+        className="flex items-center mb-6 text-3xl font-semibold text-gray-900 cursor-pointer"
       >
-        <img src="/img/logo.svg" alt="Matching Queue" className="w-10 h-10 mr-2" />
+        <img
+          src="/img/logo.svg"
+          alt="Matching Queue"
+          className="w-10 h-10 mr-2"
+        />
         Matching Queue
-      </a>
+      </div>
       <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0">
         <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
           <h1 className="text-base font-semibold text-center text-gray-900 md:text-2xl">
@@ -61,11 +65,17 @@ export default function Register() {
                     message: "Tên phải có ít nhất 3 ký tự",
                   },
                 })}
-                className={`bg-gray-50 border-2 text-gray-900 outline-none text-sm rounded-lg block w-full p-2.5 ${errors.name ? "border-red-500" : "border-gray-300 focus:border-[#b67d3f]"
+                className={`bg-gray-50 border-2 text-gray-900 outline-none text-sm rounded-lg block w-full p-2.5 ${errors.name
+                  ? "border-red-500"
+                  : "border-gray-300 focus:border-[#b67d3f]"
                   }`}
                 type="text"
               />
-              {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
+              {errors.name && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.name.message}
+                </p>
+              )}
             </div>
 
             <div>
@@ -80,11 +90,17 @@ export default function Register() {
                     message: "Email không đúng định dạng",
                   },
                 })}
-                className={`bg-gray-50 border-2 text-gray-900 outline-none text-sm rounded-lg block w-full p-2.5 ${errors.email ? "border-red-500" : "border-gray-300 focus:border-[#b67d3f]"
+                className={`bg-gray-50 border-2 text-gray-900 outline-none text-sm rounded-lg block w-full p-2.5 ${errors.email
+                  ? "border-red-500"
+                  : "border-gray-300 focus:border-[#b67d3f]"
                   }`}
                 type="email"
               />
-              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
 
             <div>
@@ -99,12 +115,16 @@ export default function Register() {
                     message: "Số điện thoại phải có 10-11 chữ số",
                   },
                 })}
-                className={`bg-gray-50 border-2 text-gray-900 outline-none text-sm rounded-lg block w-full p-2.5 ${errors.phone ? "border-red-500" : "border-gray-300 focus:border-[#b67d3f]"
+                className={`bg-gray-50 border-2 text-gray-900 outline-none text-sm rounded-lg block w-full p-2.5 ${errors.phone
+                  ? "border-red-500"
+                  : "border-gray-300 focus:border-[#b67d3f]"
                   }`}
                 type="text"
               />
               {errors.phone && (
-                <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.phone.message}
+                </p>
               )}
             </div>
 
@@ -120,12 +140,16 @@ export default function Register() {
                     message: "Mật khẩu phải có ít nhất 6 ký tự",
                   },
                 })}
-                className={`bg-gray-50 border-2 text-gray-900 outline-none text-sm rounded-lg block w-full p-2.5 ${errors.password ? "border-red-500" : "border-gray-300 focus:border-[#b67d3f]"
+                className={`bg-gray-50 border-2 text-gray-900 outline-none text-sm rounded-lg block w-full p-2.5 ${errors.password
+                  ? "border-red-500"
+                  : "border-gray-300 focus:border-[#b67d3f]"
                   }`}
                 type="password"
               />
               {errors.password && (
-                <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.password.message}
+                </p>
               )}
             </div>
 
@@ -151,10 +175,19 @@ export default function Register() {
                 Đăng ký
               </button>
             </div>
+
+            <p className="text-sm font-light text-gray-500 ">
+              Đã có tài khoản{" "}
+              <span
+                onClick={() => navigate("/login")}
+                className="font-medium text-[#d28947] hover:underline cursor-pointer"
+              >
+                Đăng nhập ở đây
+              </span>
+            </p>
           </form>
         </div>
       </div>
     </div>
   );
 }
-

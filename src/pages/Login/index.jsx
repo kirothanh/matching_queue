@@ -4,31 +4,56 @@ import { useNavigate } from "react-router-dom";
 import authorizedAxiosInstance from "../../utils/authorizedAxios";
 import { toast } from "react-toastify";
 import { localStorageSetup } from "../../utils/localStorageSetup";
+import { useEffect } from "react";
 
 export default function Login() {
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     defaultValues: {
-      name: '',
-      password: '',
-    }
+      name: "",
+      password: "",
+    },
   });
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const submitLogin = async (data) => {
     try {
       const res = await authorizedAxiosInstance.post(`/auth/login`, data);
       if (res.data.success === false) {
-        toast.error(res.data.message)
+        toast.error(res.data.message);
       } else {
-        console.log("first: ", res.data.data)
-        localStorageSetup(res.data.data)
-        toast.success("Đăng nhập thành công !")
-        navigate("/")
+        localStorageSetup(res.data.data);
+        toast.success("Đăng nhập thành công !");
+        navigate("/");
       }
     } catch (error) {
-      console.error("Login failed 123123: ", error.response?.data || error.message);
+      console.error(
+        "Login failed: ",
+        error.response?.data || error.message
+      );
     }
-  }
+  };
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const accessToken = urlParams.get("accessToken");
+    const refreshToken = urlParams.get("refreshToken");
+    if (accessToken) {
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+
+      toast.success("Đăng nhập thành công!", {
+        position: "top-right",
+        autoClose: 200,
+        onClose: () => navigate("/"),
+      });
+    } else {
+      navigate("/login");
+    }
+  }, [navigate]);
 
   return (
     <div className="max-w-screen-xl px-4 py-8 mx-auto lg:grid lg:gap-20 lg:py-16 lg:grid-cols-12 h-screen">
@@ -118,9 +143,9 @@ export default function Login() {
         </nav>
       </div>
       <div className="mb-6 text-center lg:hidden">
-        <a
-          href="#!"
-          className="inline-flex items-center text-2xl font-semibold text-gray-900 lg:hidden"
+        <div
+          onClick={() => navigate("/")}
+          className="inline-flex items-center text-2xl font-semibold text-gray-900 lg:hidden cursor-pointer"
         >
           <img
             src="/img/logo.svg"
@@ -128,19 +153,34 @@ export default function Login() {
             className="w-10 h-10 mr-2"
           />
           Matching Queue
-        </a>
+        </div>
       </div>
       <div className="w-full col-span-6 mx-auto bg-white rounded-lg shadow md:mt-0 sm:max-w-lg xl:p-0">
         <div className="p-6 space-y-4 lg:space-y-6 sm:p-8">
           <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 sm:text-2xl">
             Chào mừng quay trở lại
           </h1>
+          <div className="w-full items-center space-y-3 sm:space-x-4 sm:space-y-0 sm:flex">
+            <a href={`${import.meta.env.VITE_SERVER_API}/auth/google`} className="w-full">
+              <button className="w-full inline-flex items-center justify-center py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-gray-900 focus:z-10 focus:ring-4 focus:ring-gray-200">
+                <img
+                  src="/img/google.svg"
+                  alt="google logo"
+                  className="w-5 h-5 mr-2"
+                />
+                Đăng nhập với Google
+              </button>
+            </a>
+          </div>
           <div className="flex items-center">
             <div className="w-full h-0.5 bg-gray-200"></div>
             <div className="px-5 text-center text-gray-500">or</div>
             <div className="w-full h-0.5 bg-gray-200"></div>
           </div>
-          <form onSubmit={handleSubmit(submitLogin)} className="space-y-4 lg:space-y-6">
+          <form
+            onSubmit={handleSubmit(submitLogin)}
+            className="space-y-4 lg:space-y-6"
+          >
             <div>
               <label
                 htmlFor="user_email"
@@ -150,7 +190,9 @@ export default function Login() {
               </label>
               <input
                 type="email"
-                className={`bg-gray-50 border-2 outline-none text-gray-900 rounded-lg block w-full p-2.5 ${errors.email ? "border-red-500" : "border-gray-300 focus:border-[#b37f45]"
+                className={`bg-gray-50 border-2 outline-none text-gray-900 rounded-lg block w-full p-2.5 ${errors.email
+                  ? "border-red-500"
+                  : "border-gray-300 focus:border-[#b37f45]"
                   }`}
                 placeholder="Email"
                 id="user_email"
@@ -162,7 +204,11 @@ export default function Login() {
                   },
                 })}
               />
-              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
             <div>
               <label
@@ -173,7 +219,9 @@ export default function Login() {
               </label>
               <input
                 type="password"
-                className={`bg-gray-50 border-2 outline-none text-gray-900 rounded-lg block w-full p-2.5 ${errors.password ? "border-red-500" : "border-gray-300 focus:border-[#b37f45]"
+                className={`bg-gray-50 border-2 outline-none text-gray-900 rounded-lg block w-full p-2.5 ${errors.password
+                  ? "border-red-500"
+                  : "border-gray-300 focus:border-[#b37f45]"
                   }`}
                 placeholder="••••••••"
                 id="user_password"
@@ -185,7 +233,11 @@ export default function Login() {
                   },
                 })}
               />
-              {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
+              {errors.password && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-start">
@@ -209,12 +261,12 @@ export default function Login() {
                   </label>
                 </div>
               </div>
-              <a
-                href="#"
+              <span
+                onClick={() => navigate("/forgot-password")}
                 className="text-sm font-medium text-[#b67e3a] hover:underline dark:text-primary-500"
               >
                 Forgot password?
-              </a>
+              </span>
             </div>
             <button
               type="submit"
@@ -224,12 +276,12 @@ export default function Login() {
             </button>
             <p className="text-sm font-light text-gray-500 ">
               Chưa có tài khoản?
-              <a
-                href="/register"
-                className="font-medium text-[#d87706] hover:underline ml-[5px]"
+              <span
+                onClick={() => navigate("/register")}
+                className="font-medium text-[#d87706] hover:underline ml-[5px] cursor-pointer"
               >
                 Đăng ký ở đây
-              </a>
+              </span>
             </p>
           </form>
         </div>
