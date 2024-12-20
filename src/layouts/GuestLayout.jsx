@@ -4,10 +4,10 @@ import Menu from "./Menu";
 
 export default function GuestLayout({ children }) {
   return (
-    <>
+    <div className="flex relative">
       {/* <Header /> */}
       <Menu />
-      <div>{children}</div>
-    </>
+      <div className="w-full">{children}</div>
+    </div>
   )
 }

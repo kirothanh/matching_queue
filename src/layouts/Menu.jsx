@@ -7,12 +7,27 @@ import { MdOutlineSignalCellularAlt } from "react-icons/md";
 import { TbLayoutDashboardFilled } from "react-icons/tb";
 import authorizedAxiosInstance from "../utils/authorizedAxios";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { IoIosClose } from "react-icons/io";
+import { IoMenu } from "react-icons/io5";
+import { useState } from "react";
+
+const MenuItems = [
+  { name: "Cộng đồng", icon: FaHome, path: "/" },
+  { name: "Cáp kèo - Tìm đối", icon: AiFillThunderbolt, path: "/dashboard" },
+  { name: "Bảng xếp hạng", icon: MdOutlineSignalCellularAlt, path: "/profile" },
+  { name: "Đặt sân", icon: TbLayoutDashboardFilled, path: "/notification" },
+  { name: "Thông báo", icon: BiSolidBellRing, path: "/service" },
+  { name: "Hồ sơ", icon: FaCircleUser, path: "/user-profile" },
+];
 
 export default function Menu() {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const [menuOpen, setMenuOpen] = useState(false);
+
   const handleLogout = async () => {
-    const res = await authorizedAxiosInstance.post("/auth/logout")
+    const res = await authorizedAxiosInstance.post("/auth/logout");
     if (res.data.success) {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
@@ -20,120 +35,83 @@ export default function Menu() {
       toast.success("Đăng xuất thành công");
       navigate("/login");
     } else {
-      toast.error(res.data.message)
+      toast.error(res.data.message);
     }
-  }
+  };
 
   return (
-    <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r bg-gray-50 border-gray-200 fixed top-0 left-0 z-40 w-64 lg:w-80 h-screen pb-16 sm:pb-10 pt-1 transition-transform -translate-x-full sm:translate-x-0">
-      <div className="flex grow flex-col px-3 py-4 bg-gray-50">
-        <div className="flex items-center pl-2.5 mb-5">
-          <img src="/img/logo.svg" alt="Logo" className="h-6 mr-3 sm:h-7" />
-          <span className="self-center text-xl font-semibold whitespace-nowrap">
-            Matching Queue
-          </span>
-        </div>
-        <div className="flex flex-1 flex-col mt-3">
+    <>
+      {menuOpen && (
+        <div
+          className="fixed inset-0 bg-black opacity-50 lg:hidden"
+          onClick={() => setMenuOpen(false)}
+        ></div>
+      )}
+
+      <div
+        className={`lg:flex flex-col gap-y-5 overflow-y-auto border-r bg-gray-50 border-gray-200 z-40 w-64 lg:w-80 h-screen pb-16 sm:pb-10 pt-1 transition-transform ${menuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+          } fixed lg:relative`}
+      >
+        <div className="mt-[20px] flex grow flex-col px-3 py-4 bg-gray-50">
+          <div
+            className="flex items-center pl-2.5 mb-5 cursor-pointer"
+            onClick={() => navigate("/")}
+          >
+            <img src="/img/logo.svg" alt="Logo" className="h-6 mr-3 sm:h-7" />
+            <span className="self-center text-xl font-semibold whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-[#346ecf] to-[#0c2b6a]">Matching Queue</span>
+          </div>
+
           <ul className="font-medium flex flex-1 flex-col gap-y-3">
-            <li>
-              <a
-                className="flex items-center p-2 rounded-full dark:text-white hover:bg-gray-100 group text-gray-900 font-semibold"
-                href="#!"
-              >
-                <FaHome className="flex-shrink-0 w-6 h-6 text-[#6b717e] transition duration-75 group-hover:text-gray-900" />
-                <span className="ml-3 text-[#6b717e] group-hover:text-gray-900 ">
-                  Cộng đồng
-                </span>
-              </a>
-            </li>
-            <li>
-              <a
-                className="flex items-center p-2 rounded-full dark:text-white hover:bg-gray-100 group text-gray-900 font-semibold"
-                href="#!"
-              >
-                <AiFillThunderbolt className="flex-shrink-0 w-6 h-6 text-[#6b717e] transition duration-75 group-hover:text-gray-900" />
-                <span className="ml-3 text-[#6b717e] group-hover:text-gray-900 ">
-                  Cáp kèo - Tìm đối
-                </span>
-              </a>
-            </li>
-            <li>
-              <a
-                className="flex items-center p-2 rounded-full dark:text-white hover:bg-gray-100 group text-gray-900 font-semibold"
-                href="#!"
-              >
-                <MdOutlineSignalCellularAlt className="flex-shrink-0 w-6 h-6 text-[#6b717e] transition duration-75 group-hover:text-gray-900" />
-                <span className="ml-3 text-[#6b717e] group-hover:text-gray-900 ">
-                  Bảng xếp hạng
-                </span>
-              </a>
-            </li>
-            <li>
-              <a
-                className="flex items-center p-2 rounded-full dark:text-white hover:bg-gray-100 group text-gray-900 font-semibold"
-                href="#!"
-              >
-                <TbLayoutDashboardFilled className="flex-shrink-0 w-6 h-6 text-[#6b717e] transition duration-75 group-hover:text-gray-900" />
-                <span className="ml-3 text-[#6b717e] group-hover:text-gray-900 ">
-                  Đặt sân
-                </span>
-              </a>
-            </li>
-            <li>
-              <a
-                className="flex items-center p-2 rounded-full dark:text-white hover:bg-gray-100 group text-gray-900 font-semibold"
-                href="#!"
-              >
-                <BiSolidBellRing className="flex-shrink-0 w-6 h-6 text-[#6b717e] transition duration-75 group-hover:text-gray-900" />
-                <span className="ml-3 text-[#6b717e] group-hover:text-gray-900 ">
-                  Thông báo
-                </span>
-              </a>
-            </li>
-            <li>
-              <a
-                className="flex items-center p-2 rounded-full dark:text-white hover:bg-gray-100 group text-gray-900 font-semibold"
-                href="#!"
-              >
-                <FaCircleUser className="flex-shrink-0 w-6 h-6 text-[#6b717e] transition duration-75 group-hover:text-gray-900" />
-                <span className="ml-3 text-[#6b717e] group-hover:text-gray-900 ">
-                  Hồ sơ
-                </span>
-              </a>
-            </li>
-            <li className="p-2">
-              <div className="flex text-xs text-gray-400 items-center justify-between">
-                <span>Câu lạc bộ của bạn</span>
-              </div>
-              <ul className="-mx-2 mt-2 space-y-1">
-                <li>
-                  <a
-                    href="#!"
-                    className="flex items-center p-2 text-gray-500 rounded-full group hover:bg-gray-100"
-                  >
-                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border bg-white text-gray-400 border-gray-200 group-hover:text-gray-900">
-                      #
-                    </span>
-                    <span className="truncate text-gray-400 ml-2 group-hover:text-gray-900">
-                      FC
-                    </span>
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li className="flex flex-row items-center mt-auto pb-2">
-              <a href="#!" className="w-full">
-                <button className="flex p-2 text-gray-500 rounded-lg dark:text-white group hover:bg-gray-100 w-full">
-                  <CiLogin className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900" />
-                  <span className="ml-3 whitespace-nowrap text-[#6b717e] group-hover:text-gray-900" onClick={handleLogout}>
-                    Đăng xuất
+            {MenuItems.map((item, index) => (
+              <li key={index}>
+                <a
+                  className={`flex items-center p-2 rounded-full group hover:bg-gray-100 font-semibold cursor-pointer transition duration-300 ${pathname === item.path
+                    ? "bg-[#dbeaff] text-[#346ecf]"
+                    : "text-[#6b717e]"
+                    } "
+                  }`}
+                  onClick={() => navigate(item.path)}
+                >
+                  <item.icon
+                    className={`flex-shrink-0 w-6 h-6 transition duration-75 group-hover:text-gray-900 ${pathname === item.path
+                      ? "text-[#346ecf]"
+                      : "text-[#6b717e]"
+                      }`}
+                  />
+                  <span className="ml-3 group-hover:text-gray-900">
+                    {item.name}
                   </span>
-                </button>
-              </a>
+                </a>
+              </li>
+            ))}
+
+            <li className="flex flex-row items-center mt-auto pb-2">
+              <button
+                className="flex p-2 text-gray-500 rounded-lg group hover:bg-gray-100 w-full"
+                onClick={handleLogout}
+              >
+                <CiLogin className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 group-hover:text-gray-900" />
+                <span className="ml-3 whitespace-nowrap text-[#6b717e] group-hover:text-gray-900">
+                  Đăng xuất
+                </span>
+              </button>
             </li>
           </ul>
         </div>
       </div>
-    </div>
+      <div className="block lg:hidden p-3 absolute right-0">
+        {menuOpen ? (
+          <IoIosClose
+            className="inline-block lg:hidden w-9 h-9 p-1 mt-[10px] cursor-pointer text-lg hover:text-[#346ecf] bg-[#dbeaff] rounded-full"
+            onClick={() => setMenuOpen(false)}
+          />
+        ) : (
+          <IoMenu
+            className="inline-block lg:hidden w-9 h-9 p-1 mt-[10px] cursor-pointer text-lg hover:text-[#346ecf] bg-[#dbeaff] rounded-full"
+            onClick={() => setMenuOpen(true)}
+          />
+        )}
+      </div>
+    </>
   );
 }

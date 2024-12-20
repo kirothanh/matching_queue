@@ -1,12 +1,15 @@
 import { useForm } from "react-hook-form";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
-import authorizedAxiosInstance from "../../utils/authorizedAxios";
 import { toast } from "react-toastify";
 import { localStorageSetup } from "../../utils/localStorageSetup";
 import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { getUserFromLogin } from "../../store/slices/userSlice";
 
 export default function Login() {
+  const dispatch = useDispatch()
+
   const {
     register,
     handleSubmit,
@@ -21,11 +24,12 @@ export default function Login() {
 
   const submitLogin = async (data) => {
     try {
-      const res = await authorizedAxiosInstance.post(`/auth/login`, data);
-      if (res.data.success === false) {
-        toast.error(res.data.message);
+      const result = await dispatch(getUserFromLogin(data));
+      const { success, message, data: userInfo } = result.payload;
+      if (success === false) {
+        toast.error(message);
       } else {
-        localStorageSetup(res.data.data);
+        localStorageSetup(userInfo);
         toast.success("Đăng nhập thành công !");
         navigate("/");
       }

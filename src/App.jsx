@@ -7,6 +7,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import UserProfile from "./pages/UserProfile";
 
 const LoginPage = lazy(() => import("./pages/Login"));
 const RegisterPage = lazy(() => import("./pages/Register"));
@@ -16,6 +17,10 @@ export default function App() {
     {
       path: "/",
       element: <PrivateRoute element={<Dashboard />} />,
+    },
+    {
+      path: "/user-profile",
+      element: <PrivateRoute element={<UserProfile />} />,
     },
     { path: "/login", element: <PublicRoute element={<LoginPage />} /> },
     { path: "/register", element: <PublicRoute element={<RegisterPage />} /> },

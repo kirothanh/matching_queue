@@ -1,10 +1,12 @@
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import authorizedAxiosInstance from "../../utils/authorizedAxios";
 import { localStorageSetup } from "../../utils/localStorageSetup";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { getUserFromRegister } from "../../store/slices/userSlice";
 
 export default function Register() {
+  const dispatch = useDispatch()
   const {
     register,
     handleSubmit,
@@ -14,14 +16,13 @@ export default function Register() {
 
   const submitRegister = async (data) => {
     try {
-      const res = await authorizedAxiosInstance.post(
-        `${import.meta.env.VITE_SERVER_API}/auth/register`,
-        data
-      );
-      if (res.data.success === false) {
-        toast.error(res.data.message);
+      const result = await dispatch(getUserFromRegister(data));
+      const { success, message, data: userInfo } = result.payload;
+
+      if (success === false) {
+        toast.error(message);
       } else {
-        localStorageSetup(res.data.data);
+        localStorageSetup(userInfo);
         toast.success("Đăng ký thành công!");
         navigate("/");
       }

@@ -38,6 +38,7 @@ authorizedAxiosInstance.interceptors.response.use(
       handleLogoutAPI().then(() => {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
+        localStorage.removeItem('userInfo');
 
         // location.href = '/login';
       });
@@ -53,8 +54,8 @@ authorizedAxiosInstance.interceptors.response.use(
         // Gọi api refresh token
         refreshTokenPromise = refreshTokenAPI(refreshToken)
           .then((res) => {
-            // Lấy và gán lại accessToken vào localStorage
-            const { accessToken } = res.data;
+            // Lấy và gán lại accessToken vào localStora
+            const { accessToken } = res.data.data;
             localStorage.setItem('accessToken', accessToken);
             authorizedAxiosInstance.defaults.headers.Authorization = `Bearer ${accessToken}`;
           })
