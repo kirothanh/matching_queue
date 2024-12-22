@@ -43,11 +43,7 @@ const getUserFromRegister = createAsyncThunk(
 export const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {
-    setUserValue: (state, action) => {
-      state.userValue = action.payload;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(getUserProfile.pending, (state) => {
