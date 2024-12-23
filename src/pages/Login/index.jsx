@@ -267,7 +267,7 @@ export default function Login() {
               </div>
               <span
                 onClick={() => navigate("/forgot-password")}
-                className="text-sm font-medium text-[#b67e3a] hover:underline dark:text-primary-500"
+                className="text-sm font-medium text-[#b67e3a] hover:underline dark:text-primary-500 cursor-pointer"
               >
                 Forgot password?
               </span>
