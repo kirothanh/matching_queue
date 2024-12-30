@@ -1,13 +1,15 @@
 /* eslint-disable react/prop-types */
 // import Header from "./Header";
+import { Outlet } from "react-router-dom";
 import Menu from "./Menu";
 
-export default function GuestLayout({ children }) {
+export default function GuestLayout() {
   return (
     <div className="flex relative">
-      {/* <Header /> */}
       <Menu />
-      <div className="w-full">{children}</div>
+      <div className="w-full">
+        <Outlet />
+      </div>
     </div>
-  )
+  );
 }

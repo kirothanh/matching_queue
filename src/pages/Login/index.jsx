@@ -31,7 +31,11 @@ export default function Login() {
       } else {
         localStorageSetup(userInfo);
         toast.success("Đăng nhập thành công !");
-        navigate("/");
+        if (userInfo.user.role === 1) {
+          navigate("/admin")
+        } else {
+          navigate("/");
+        }
       }
     } catch (error) {
       console.error(

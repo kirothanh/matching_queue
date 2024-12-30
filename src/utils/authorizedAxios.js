@@ -40,7 +40,7 @@ authorizedAxiosInstance.interceptors.response.use(
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('userInfo');
 
-        // location.href = '/login';
+        location.href = '/login';
       });
     }
 
