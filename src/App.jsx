@@ -15,6 +15,9 @@ import { useDispatch } from "react-redux";
 import { getUserProfile } from "./store/slices/userSlice";
 import DashboardAdmin from "./pages/admin/DashboardAdmin";
 import StadiumCreate from "./pages/admin/Stadium/StadiumCreate";
+import Matching from "./pages/Matching";
+import MatchingCreate from "./pages/Matching/MatchingCreate";
+import Club from "./pages/Club";
 // import SuperAdminLayout from "./layouts/SuperAdminLayout";
 
 const LoginPage = lazy(() => import("./pages/Login"));
@@ -63,6 +66,18 @@ export default function App() {
           path: "user-profile",
           element: <WrappedRoute element={<UserProfile />} />,
         },
+        {
+          path: "matching",
+          element: <WrappedRoute element={<Matching />} />,
+        },
+        {
+          path: "matching/create",
+          element: <WrappedRoute element={<MatchingCreate />} />,
+        },
+        {
+          path: "club/create",
+          element: <WrappedRoute element={<Club />} />,
+        }
       ]
     },
     { path: "/login", element: <PublicRoute element={<LoginPage />} /> },

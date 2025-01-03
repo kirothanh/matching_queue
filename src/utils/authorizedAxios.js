@@ -36,9 +36,6 @@ authorizedAxiosInstance.interceptors.response.use(
     // Nếu như nhận mã 401 từ BE, thì sẽ gọi api logout luôn
     if (error.response?.status === 401) {
       handleLogoutAPI().then(() => {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('userInfo');
 
         location.href = '/login';
       });
@@ -56,13 +53,12 @@ authorizedAxiosInstance.interceptors.response.use(
           .then((res) => {
             // Lấy và gán lại accessToken vào localStora
             const { accessToken } = res.data.data;
+            console.log('accessToken: ', accessToken);
             localStorage.setItem('accessToken', accessToken);
             authorizedAxiosInstance.defaults.headers.Authorization = `Bearer ${accessToken}`;
           })
           .catch((_error) => {
             handleLogoutAPI().then(() => {
-              localStorage.removeItem('accessToken');
-              localStorage.removeItem('refreshToken');
               location.href = '/login';
             });
 

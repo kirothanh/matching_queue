@@ -19,7 +19,7 @@ export default function MenuAdmin() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = async () => {
-    const res = await authorizedAxiosInstance.post("/auth/logout");
+    const res = await authorizedAxiosInstance.delete("/auth/logout");
     if (res.data.success) {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");

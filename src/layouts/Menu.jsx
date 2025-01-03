@@ -3,8 +3,7 @@ import { BiSolidBellRing } from "react-icons/bi";
 import { CiLogin } from "react-icons/ci";
 import { FaHome } from "react-icons/fa";
 import { FaCircleUser } from "react-icons/fa6";
-import { MdOutlineSignalCellularAlt } from "react-icons/md";
-import { TbLayoutDashboardFilled } from "react-icons/tb";
+import { MdOutlineSignalCellularAlt, MdPeople } from "react-icons/md";
 import authorizedAxiosInstance from "../utils/authorizedAxios";
 import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -14,9 +13,9 @@ import { useState } from "react";
 
 const MenuItems = [
   { name: "Cộng đồng", icon: FaHome, path: "/" },
-  { name: "Cáp kèo - Tìm đối", icon: AiFillThunderbolt, path: "/dashboard" },
+  { name: "Cáp kèo - Tìm đối", icon: AiFillThunderbolt, path: "/matching" },
+  { name: "Tạo Đội bóng", icon: MdPeople, path: "/club/create" },
   { name: "Bảng xếp hạng", icon: MdOutlineSignalCellularAlt, path: "/profile" },
-  { name: "Đặt sân", icon: TbLayoutDashboardFilled, path: "/notification" },
   { name: "Thông báo", icon: BiSolidBellRing, path: "/service" },
   { name: "Hồ sơ", icon: FaCircleUser, path: "/user-profile" },
 ];
@@ -27,7 +26,7 @@ export default function Menu() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = async () => {
-    const res = await authorizedAxiosInstance.post("/auth/logout");
+    const res = await authorizedAxiosInstance.delete("/auth/logout");
     if (res.data.success) {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");

@@ -2,6 +2,7 @@
 import { Box, Button, Modal, Typography } from "@mui/material";
 import authorizedAxiosInstance from "../utils/authorizedAxios";
 import { toast } from "react-toastify";
+import { IoIosWarning } from "react-icons/io";
 
 const style = {
   position: 'absolute',
@@ -14,6 +15,10 @@ const style = {
   borderRadius: 2,
   boxShadow: 24,
   p: 4,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: 2
 };
 
 export default function ModalDelete({ open, handleClose, id, setId }) {
@@ -36,12 +41,13 @@ export default function ModalDelete({ open, handleClose, id, setId }) {
       aria-describedby="modal-modal-description"
     >
       <Box sx={style}>
-        <Typography id="modal-modal-title" variant="h6" component="h2" className="text-center font-semibold text-xl">
+        <IoIosWarning style={{ fontSize: '50px', color: "red" }} />
+        <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ color: "#0c0c0c", fontWeight: "bold", textAlign: "center" }}>
           Bạn có chắc muốn xóa ?
         </Typography>
-        <div className="flex justify-center gap-4">
-          <Button onClick={handleDeleteStadium} className="bg-red-500 text-white">Xóa</Button>
-          <Button onClick={handleClose} className="bg-gray-500 text-white">Hủy</Button>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+          <Button onClick={handleDeleteStadium} sx={{ backgroundColor: "red", color: "white" }} >Xóa</Button>
+          <Button onClick={handleClose} sx={{ backgroundColor: "#3876d1", color: "white" }}>Hủy</Button>
         </div>
       </Box>
     </Modal>

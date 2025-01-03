@@ -59,7 +59,9 @@ export default function Login() {
         onClose: () => navigate("/"),
       });
     } else {
-      navigate("/login");
+      if (window.location.pathname !== "/login") {
+        navigate("/login");
+      }
     }
   }, [navigate]);
 
