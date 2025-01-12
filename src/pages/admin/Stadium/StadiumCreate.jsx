@@ -156,6 +156,8 @@ export default function StadiumCreate() {
       form.append("ward", data.ward);
 
       if (image) {
+        const oldKeyUrl = image ? image.split("/").pop() : null;
+        form.append("oldKeyUrl", oldKeyUrl);
         const fileInput = document.querySelector('input[type="file"]');
         form.append("image", fileInput.files[0]);
       }

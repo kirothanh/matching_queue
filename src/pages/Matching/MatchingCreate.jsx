@@ -17,6 +17,8 @@ import authorizedAxiosInstance from "../../utils/authorizedAxios";
 import moment from "moment";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { DatePicker, LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 
 export default function MatchingCreate() {
   const { data: userValue } = useSelector((state) => state.user.userValue);
@@ -30,6 +32,9 @@ export default function MatchingCreate() {
     matchDate: Yup.date()
       .required("Vui lòng chọn ngày đấu.")
       .typeError("Ngày đấu không hợp lệ."),
+    matchTime: Yup.date()
+      .required("Vui lòng chọn giờ đấu.")
+      .typeError("Giờ đấu không hợp lệ."),
     contactNumber: Yup.string()
       .required("Vui lòng nhập số điện thoại liên hệ.")
       .matches(/^\d{10,11}$/, "Số điện thoại phải có 10-11 chữ số."),
@@ -46,6 +51,7 @@ export default function MatchingCreate() {
       stadiumId: "",
       clubId: "",
       matchDate: "",
+      matchTime: "",
       contactNumber: userValue?.phone || "",
       description: "",
     },
@@ -57,10 +63,8 @@ export default function MatchingCreate() {
       const payload = {
         stadium_id: data.stadiumId,
         club_id: data.clubId,
-        matchDate: moment(
-          data.matchDate,
-          "ddd MMM DD YYYY HH:mm:ss"
-        ).toISOString(),
+        matchDate: moment(data.matchDate).toISOString(),
+        matchTime: moment(data.matchTime).format("HH:mm:ss"),
         contactNumber: data.contactNumber,
         description: data.description,
       };
@@ -127,7 +131,7 @@ export default function MatchingCreate() {
         </h2>
       </div>
 
-      <div className="p-4 max-w-[80%] mx-auto">
+      <div className="p-4 max-w-[1200px] mx-auto">
         <Typography
           variant="h5"
           gutterBottom
@@ -194,23 +198,57 @@ export default function MatchingCreate() {
               )}
             </FormControl>
           </Box>
-          <Box sx={{ marginBottom: "20px" }}>
-            <Controller
-              name="matchDate"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  type="date"
-                  label="Ngày đấu"
-                  InputLabelProps={{ shrink: true }}
-                  error={!!errors.matchDate}
-                  helperText={errors.matchDate?.message}
-                />
-              )}
-            />
-          </Box>
+
+          <LocalizationProvider dateAdapter={AdapterMoment}>
+            <Box sx={{ marginBottom: "20px", width: "100%" }}>
+              <Controller
+                name="matchDate"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <DatePicker
+                    value={value ? moment(value) : null}
+                    onChange={(newValue) => onChange(moment(newValue))}
+                    minDate={moment()}
+                    sx={{ width: "100%" }}
+                    label="Chọn ngày thi đấu"
+                    renderInput={(props) => (
+                      <TextField
+                        {...props}
+                        label="Chọn ngày đấu"
+                        fullWidth
+                        error={!!errors.matchDate}
+                        helperText={errors.matchDate?.message}
+                      />
+                    )}
+                  />
+                )}
+              />
+            </Box>
+            <Box sx={{ marginBottom: "20px", width: "100%" }}>
+              <Controller
+                name="matchTime"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <TimePicker
+                    value={value ? moment(value) : null}
+                    onChange={(newValue) => onChange(moment(newValue))}
+                    label="Chọn giờ thi đấu"
+                    sx={{ width: "100%" }}
+                    renderInput={(props) => (
+                      <TextField
+                        {...props}
+                        label="Chọn giờ đấu"
+                        fullWidth
+                        error={!!errors.matchTime}
+                        helperText={errors.matchTime?.message}
+                      />
+                    )}
+                  />
+                )}
+              />
+            </Box>
+          </LocalizationProvider>
+
           <Box sx={{ marginBottom: "20px" }}>
             <Controller
               name="contactNumber"

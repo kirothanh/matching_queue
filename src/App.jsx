@@ -18,6 +18,8 @@ import StadiumCreate from "./pages/admin/Stadium/StadiumCreate";
 import Matching from "./pages/Matching";
 import MatchingCreate from "./pages/Matching/MatchingCreate";
 import Club from "./pages/Club";
+import MatchingManage from "./pages/Matching/MatchingManage";
+import Notifications from "./pages/Notifications";
 // import SuperAdminLayout from "./layouts/SuperAdminLayout";
 
 const LoginPage = lazy(() => import("./pages/Login"));
@@ -75,9 +77,17 @@ export default function App() {
           element: <WrappedRoute element={<MatchingCreate />} />,
         },
         {
+          path: "matching/manage-match",
+          element: <WrappedRoute element={<MatchingManage />} />,
+        },
+        {
           path: "club/create",
           element: <WrappedRoute element={<Club />} />,
-        }
+        },
+        {
+          path: "notifications",
+          element: <WrappedRoute element={<Notifications />} />,
+        },
       ]
     },
     { path: "/login", element: <PublicRoute element={<LoginPage />} /> },

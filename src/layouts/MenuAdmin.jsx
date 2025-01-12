@@ -9,7 +9,7 @@ import { IoMenu } from "react-icons/io5";
 import { useState } from "react";
 
 const MenuItems = [
-  { name: "Dashboard", icon: FaHome, path: "/" },
+  { name: "Dashboard", icon: FaHome, path: "/admin" },
   { name: "Quản lý sân bóng", icon: MdStadium, path: "/admin/stadium" },
 ];
 
