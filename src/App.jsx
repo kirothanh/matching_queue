@@ -20,6 +20,7 @@ import MatchingCreate from "./pages/Matching/MatchingCreate";
 import Club from "./pages/Club";
 import MatchingManage from "./pages/Matching/MatchingManage";
 import Notifications from "./pages/Notifications";
+import MatchingDetail from "./pages/Matching/MatchingDetail";
 // import SuperAdminLayout from "./layouts/SuperAdminLayout";
 
 const LoginPage = lazy(() => import("./pages/Login"));
@@ -79,6 +80,10 @@ export default function App() {
         {
           path: "matching/manage-match",
           element: <WrappedRoute element={<MatchingManage />} />,
+        },
+        {
+          path: "matching/:id",
+          element: <WrappedRoute element={<MatchingDetail />} />,
         },
         {
           path: "club/create",
