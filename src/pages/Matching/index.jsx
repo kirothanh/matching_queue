@@ -10,11 +10,12 @@ import { toast } from "react-toastify";
 import { Avatar, AvatarGroup, Button } from "@mui/material";
 import TitleElement from "../../components/TitleElement";
 import { io } from "socket.io-client";
+import { addNotification } from "../../store/slices/notificationsSlice";
+import Loading from "../../components/Loading";
 
 const socket = io(import.meta.env.VITE_SOCKET_SERVER_URL);
 
 const getDetailPartner = (match) => {
-  console.log('match: ', match)
   const findPartner = match?.usersJoin?.find((user) => user?.id === match?.partner_id)
   return findPartner
 }
@@ -55,22 +56,48 @@ export default function Matching() {
   };
 
   useEffect(() => {
+    if (modifiedMatches && userValue?.id) {
+      Object.values(modifiedMatches).flat().forEach(match => {
+        if (match.createdBy === userValue?.id ||
+          match.usersJoin?.some(user => user.id === userValue?.id)) {
+          socket.emit("joinRoom", { matchId: match.id });
+        }
+      });
+    }
+  }, [modifiedMatches, userValue?.id]);
+
+  useEffect(() => {
     dispatch(getMatches());
   }, [dispatch]);
 
   useEffect(() => {
     socket.on("userJoined", ({ message, matchId, users }) => {
-      toast.info(message);
+      dispatch(addNotification({ message }));
       dispatch(updateUsersJoin({ matchId, usersJoin: users }));
+    });
+
+    socket.on("matchCreated", (newMatch) => {
+      const formattedDate = moment.utc(newMatch.matchDate).local().format("DD/MM/YYYY");
+      const message = `Trận đấu mới vào ngày ${formattedDate} vừa được tạo!`
+      dispatch(addNotification({ message }));
+      // dispatch(addMatch(newMatch));
+    });
+
+    socket.on("partnerConfirmed", ({ message }) => {
+      console.log("🔥 Received partnerConfirmed event:", message);
+      dispatch(addNotification({ message }));
+      dispatch(getMatches());
     });
 
     return () => {
       socket.off("userJoined");
+      socket.off("matchCreated");
+      socket.off("partnerConfirmed");
     };
   }, [dispatch]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   return (
@@ -115,11 +142,11 @@ export default function Matching() {
                   >
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 items-center gap-4 hover:bg-gradient-to-r from-[#05f0ff] via-[#7367ff] to-[#872eed] w-full p-2 rounded-md cursor-pointer hover:text-white group">
                       <div className="font-semibold text-[20px] text-center">
-                        {match.club.name}
+                        {match?.club?.name}
                       </div>
                       <div className="flex justify-center items-center gap-[10px]">
                         <div className="flex justify-center items-center gap-[10px] ">
-                          <img src={match.club.imageUrl} className="w-[30px] " />
+                          <img src={match?.club?.imageUrl} className="w-[30px] " />
                         </div>
                         <div className="border py-1 px-2 rounded-md">
                           {moment(match.matchTime, "HH:mm:ss").format("HH:mm")}
@@ -144,7 +171,7 @@ export default function Matching() {
                                 },
                               }}
                             >
-                              {match?.usersJoin.map((partner) => (
+                              {match?.usersJoin?.map((partner) => (
                                 <Avatar
                                   key={partner?.id}
                                   alt="Remy Sharp"
@@ -158,7 +185,7 @@ export default function Matching() {
                       </div>
                       <div className="flex justify-center items-center gap-[10px]">
                         <MdOutlineStadium className="text-lg" />
-                        <span className="text-md">{match.stadium.name}</span>
+                        <span className="text-md">{match.stadium?.name}</span>
                       </div>
                       <button
                         className={`border border-gray-300 py-1 px-4 rounded capitalize ${isPast

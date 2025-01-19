@@ -10,6 +10,7 @@ import { io } from "socket.io-client";
 import authorizedAxiosInstance from "../../utils/authorizedAxios";
 import { toast } from "react-toastify";
 import { Button, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import { addNotification } from "../../store/slices/notificationsSlice";
 
 const socket = io(import.meta.env.VITE_SOCKET_SERVER_URL);
 
@@ -94,7 +95,15 @@ export default function MatchingDetail() {
   }, [modifiedMatches]);
 
   useEffect(() => {
-    dispatch(getMatches());
+    socket.on("partnerConfirmed", ({ message }) => {
+      dispatch(addNotification({ message }));
+      // toast.success(data.message);
+      dispatch(getMatches());
+    })
+
+    return () => {
+      socket.off("partnerConfirmed");
+    };
   }, [dispatch]);
 
   useEffect(() => {
@@ -285,14 +294,14 @@ export default function MatchingDetail() {
 
                   <div
                     className={`flex flex-col ${msg?.senderId === userValue?.id
-                        ? "items-end"
-                        : "items-start"
+                      ? "items-end"
+                      : "items-start"
                       } `}
                   >
                     <p
                       className={`text-md px-4 py-1 rounded-full break-words ${msg?.senderId === userValue?.id
-                          ? "bg-[#0d6dfc] text-white"
-                          : "bg-[#d9dadc]"
+                        ? "bg-[#0d6dfc] text-white"
+                        : "bg-[#d9dadc]"
                         }`}
                     >
                       {msg?.message}

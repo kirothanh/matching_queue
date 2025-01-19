@@ -10,12 +10,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { IoIosClose } from "react-icons/io";
 import { IoMenu } from "react-icons/io5";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { Badge } from "@mui/material";
 
 const MenuItems = [
   { name: "Cộng đồng", icon: FaHome, path: "/" },
   { name: "Cáp kèo - Tìm đối", icon: AiFillThunderbolt, path: "/matching" },
   { name: "Tạo Đội bóng", icon: MdPeople, path: "/club/create" },
-  // { name: "Bảng xếp hạng", icon: MdOutlineSignalCellularAlt, path: "/profile" },
   { name: "Thông báo", icon: BiSolidBellRing, path: "/notifications" },
   { name: "Hồ sơ", icon: FaCircleUser, path: "/user-profile" },
 ];
@@ -24,6 +25,9 @@ export default function Menu() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const unreadNotifications = useSelector(
+    (state) => state.notifications.list.length
+  );
 
   const handleLogout = async () => {
     const res = await authorizedAxiosInstance.delete("/auth/logout");
@@ -57,7 +61,9 @@ export default function Menu() {
             onClick={() => navigate("/")}
           >
             <img src="/img/logo.svg" alt="Logo" className="h-6 mr-3 sm:h-7" />
-            <span className="self-center text-xl font-semibold whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-[#346ecf] to-[#0c2b6a]">Matching Queue</span>
+            <span className="self-center text-xl font-semibold whitespace-nowrap bg-clip-text text-transparent bg-gradient-to-r from-[#346ecf] to-[#0c2b6a]">
+              Matching Queue
+            </span>
           </div>
 
           <ul className="font-medium flex flex-1 flex-col gap-y-3">
@@ -71,12 +77,24 @@ export default function Menu() {
                   }`}
                   onClick={() => navigate(item.path)}
                 >
-                  <item.icon
-                    className={`flex-shrink-0 w-6 h-6 transition duration-75 group-hover:text-gray-900 ${pathname === item.path
-                      ? "text-[#346ecf]"
-                      : "text-[#6b717e]"
-                      }`}
-                  />
+                  {item.name === "Thông báo" ? (
+                    <Badge color="error" badgeContent={unreadNotifications}>
+                      <item.icon
+                        className={`flex-shrink-0 w-6 h-6 transition duration-75 group-hover:text-gray-900 ${pathname === item.path
+                          ? "text-[#346ecf]"
+                          : "text-[#6b717e]"
+                          }`}
+                      />
+                    </Badge>
+                  ) : (
+                    <item.icon
+                      className={`flex-shrink-0 w-6 h-6 transition duration-75 group-hover:text-gray-900 ${pathname === item.path
+                        ? "text-[#346ecf]"
+                        : "text-[#6b717e]"
+                        }`}
+                    />
+                  )}
+
                   <span className="ml-3 group-hover:text-gray-900">
                     {item.name}
                   </span>

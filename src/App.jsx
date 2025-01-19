@@ -1,8 +1,8 @@
 import { useRoutes } from "react-router-dom";
 import PublicRoute from "./routes/PublicRoute";
 import Dashboard from "./pages/Dashboard";
-import { lazy, useEffect } from "react";
-import { ToastContainer } from "react-toastify";
+import { lazy, Suspense, useEffect } from "react";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
@@ -11,7 +11,7 @@ import Stadium from "./pages/admin/Stadium";
 import WrappedRoute from "./routes/WrappedRoute";
 import AdminLayout from "./layouts/AdminLayout";
 import GuestLayout from "./layouts/GuestLayout";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getUserProfile } from "./store/slices/userSlice";
 import DashboardAdmin from "./pages/admin/DashboardAdmin";
 import StadiumCreate from "./pages/admin/Stadium/StadiumCreate";
@@ -21,6 +21,7 @@ import Club from "./pages/Club";
 import MatchingManage from "./pages/Matching/MatchingManage";
 import Notifications from "./pages/Notifications";
 import MatchingDetail from "./pages/Matching/MatchingDetail";
+import Loading from "./components/Loading";
 // import SuperAdminLayout from "./layouts/SuperAdminLayout";
 
 const LoginPage = lazy(() => import("./pages/Login"));
@@ -28,24 +29,44 @@ const RegisterPage = lazy(() => import("./pages/Register"));
 
 export default function App() {
   const dispatch = useDispatch();
+  const notifications = useSelector((state) => state.notifications.list);
 
   useEffect(() => {
     // Gọi API để lấy thông tin user khi ứng dụng load
     dispatch(getUserProfile());
   }, [dispatch]);
 
+  useEffect(() => {
+    if (notifications.length > 0) {
+      const lastNotification = notifications[notifications.length - 1];
+      toast.info(lastNotification.message);
+    }
+  }, [notifications])
+
   const menu = [
     {
       path: "/admin",
-      element: <WrappedRoute element={<AdminLayout />} />,
+      element: (
+        <Suspense fallback={<Loading />} >
+          <WrappedRoute element={<AdminLayout />} />
+        </Suspense>
+      ),
       children: [
         {
           path: "",
-          element: <WrappedRoute element={<DashboardAdmin />} />,
+          element: (
+            <Suspense fallback={<Loading />}>
+              <WrappedRoute element={<DashboardAdmin />} />
+            </Suspense>
+          ),
         },
         {
           path: "stadium",
-          element: <WrappedRoute element={<Stadium />} />,
+          element: (
+            <Suspense fallback={<Loading />}>
+              <WrappedRoute element={<Stadium />} />
+            </Suspense>
+          ),
         },
         {
           path: "stadium/create",
@@ -63,15 +84,27 @@ export default function App() {
       children: [
         {
           path: "",
-          element: <WrappedRoute element={<Dashboard />} />,
+          element: (
+            <Suspense fallback={<Loading />}>
+              <WrappedRoute element={<Dashboard />} />
+            </Suspense>
+          ),
         },
         {
           path: "user-profile",
-          element: <WrappedRoute element={<UserProfile />} />,
+          element: (
+            <Suspense fallback={<Loading />}>
+              <WrappedRoute element={<UserProfile />} />
+            </Suspense>
+          ),
         },
         {
           path: "matching",
-          element: <WrappedRoute element={<Matching />} />,
+          element: (
+            <Suspense fallback={<Loading />}>
+              <WrappedRoute element={<Matching />} />
+            </Suspense>
+          ),
         },
         {
           path: "matching/create",
@@ -83,7 +116,11 @@ export default function App() {
         },
         {
           path: "matching/:id",
-          element: <WrappedRoute element={<MatchingDetail />} />,
+          element: (
+            <Suspense fallback={<Loading />}>
+              <WrappedRoute element={<MatchingDetail />} />
+            </Suspense>
+          ),
         },
         {
           path: "club/create",
@@ -91,12 +128,28 @@ export default function App() {
         },
         {
           path: "notifications",
-          element: <WrappedRoute element={<Notifications />} />,
+          element: (
+            <Suspense fallback={<Loading />}>
+              <WrappedRoute element={<Notifications />} />
+            </Suspense>
+          ),
         },
       ]
     },
-    { path: "/login", element: <PublicRoute element={<LoginPage />} /> },
-    { path: "/register", element: <PublicRoute element={<RegisterPage />} /> },
+    {
+      path: "/login", element: (
+        <Suspense fallback={<Loading />}>
+          <PublicRoute element={<LoginPage />} />
+        </Suspense>
+      ),
+    },
+    {
+      path: "/register", element: (
+        <Suspense fallback={<Loading />}>
+          <PublicRoute element={<RegisterPage />} />
+        </Suspense>
+      ),
+    },
     {
       path: "/forgot-password",
       element: <PublicRoute element={<ForgotPassword />} />,

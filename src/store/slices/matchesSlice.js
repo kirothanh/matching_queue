@@ -21,6 +21,22 @@ export const matchesSlice = createSlice({
   name: "matches",
   initialState,
   reducers: {
+    // addMatch: (state, action) => {
+    //   const newMatch = action.payload;
+    //   const matchDate = newMatch.matchDate
+
+    //   if (!state.modifiedMatches[matchDate]) {
+    //     state.modifiedMatches[matchDate] = [];
+    //   }
+
+    //   const matchExists = state.modifiedMatches[matchDate].some(
+    //     (m) => m.id === newMatch.id
+    //   );
+
+    //   if (!matchExists) {
+    //     state.modifiedMatches[matchDate].push(newMatch);
+    //   }
+    // },
     updateUsersJoin(state, action) {
       const { matchId, usersJoin } = action.payload;
 
@@ -36,11 +52,12 @@ export const matchesSlice = createSlice({
       // Update modifiedMatches
       const updatedModifiedMatches = { ...state.modifiedMatches };
       Object.keys(updatedModifiedMatches).forEach((key) => {
-        updatedModifiedMatches[key] = updatedModifiedMatches[key].map((match) => match.id === matchId ? { ...match, usersJoin } : match)
-      })
+        updatedModifiedMatches[key] = updatedModifiedMatches[key].map((match) =>
+          match.id === matchId ? { ...match, usersJoin } : match
+        );
+      });
       state.modifiedMatches = updatedModifiedMatches;
-
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -55,11 +72,11 @@ export const matchesSlice = createSlice({
         const newModifiedMatches = {};
         action.payload.forEach((match) => {
           if (!newModifiedMatches[match.matchDate]) {
-            newModifiedMatches[match.matchDate] = [match]
+            newModifiedMatches[match.matchDate] = [match];
           } else {
             newModifiedMatches[match.matchDate].push(match);
           }
-        })
+        });
 
         state.modifiedMatches = newModifiedMatches;
       })

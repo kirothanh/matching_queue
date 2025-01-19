@@ -19,6 +19,9 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { DatePicker, LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { io } from "socket.io-client";
+
+const socket = io(import.meta.env.VITE_SOCKET_SERVER_URL);
 
 export default function MatchingCreate() {
   const { data: userValue } = useSelector((state) => state.user.userValue);
@@ -80,6 +83,9 @@ export default function MatchingCreate() {
 
       if (res.data.success) {
         toast.success(res.data.message);
+
+        socket.emit("matchCreated", res.data.data);
+        socket.emit("joinRoom", { matchId: res.data.data.id, partnerId: userValue.id });
         navigate("/matching");
       }
     } catch (error) {

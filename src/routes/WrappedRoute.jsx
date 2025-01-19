@@ -10,6 +10,10 @@ export default function WrappedRoute({ element }) {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // if (loading) {
+  //   return <Loading />;
+  // }
+
   useEffect(() => {
     if (!isLogin) {
       navigate("/login");

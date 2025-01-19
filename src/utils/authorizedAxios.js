@@ -53,7 +53,6 @@ authorizedAxiosInstance.interceptors.response.use(
           .then((res) => {
             // Lấy và gán lại accessToken vào localStora
             const { accessToken } = res.data.data;
-            console.log('accessToken: ', accessToken);
             localStorage.setItem('accessToken', accessToken);
             authorizedAxiosInstance.defaults.headers.Authorization = `Bearer ${accessToken}`;
           })
