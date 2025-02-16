@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 import { Avatar, AvatarGroup, Button } from "@mui/material";
 import TitleElement from "../../components/TitleElement";
 import { io } from "socket.io-client";
-import { addNotification } from "../../store/slices/notificationsSlice";
+import { postNoti } from "../../store/slices/notificationsSlice";
 import Loading from "../../components/Loading";
 
 const socket = io(import.meta.env.VITE_SOCKET_SERVER_URL);
@@ -72,20 +72,33 @@ export default function Matching() {
 
   useEffect(() => {
     socket.on("userJoined", ({ message, matchId, users }) => {
-      dispatch(addNotification({ message }));
+      const notification = {
+        userId: userValue?.id,
+        title: message
+      }
+      dispatch(postNoti(notification));
       dispatch(updateUsersJoin({ matchId, usersJoin: users }));
     });
 
     socket.on("matchCreated", (newMatch) => {
       const formattedDate = moment.utc(newMatch.matchDate).local().format("DD/MM/YYYY");
       const message = `Trận đấu mới vào ngày ${formattedDate} vừa được tạo!`
-      dispatch(addNotification({ message }));
+
+      const notification = {
+        userId: userValue.id,
+        title: message
+      }
+
+      dispatch(postNoti(notification));
       // dispatch(addMatch(newMatch));
     });
 
     socket.on("partnerConfirmed", ({ message }) => {
-      console.log("🔥 Received partnerConfirmed event:", message);
-      dispatch(addNotification({ message }));
+      const notification = {
+        userId: userValue?.id,
+        title: message
+      }
+      dispatch(postNoti(notification));
       dispatch(getMatches());
     });
 
@@ -94,7 +107,7 @@ export default function Matching() {
       socket.off("matchCreated");
       socket.off("partnerConfirmed");
     };
-  }, [dispatch]);
+  }, [userValue, dispatch]);
 
   if (loading) {
     return <Loading />;

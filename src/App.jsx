@@ -39,7 +39,7 @@ export default function App() {
   useEffect(() => {
     if (notifications.length > 0) {
       const lastNotification = notifications[notifications.length - 1];
-      toast.info(lastNotification.message);
+      toast.info(lastNotification.data.title);
     }
   }, [notifications])
 
