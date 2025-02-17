@@ -7,7 +7,6 @@ import NotificationItem from "./NotificationItem";
 import NotificationActions from "./NotificationActions";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { toast } from "react-toastify";
 
 export default function Notifications() {
   const [valueTab, setValueTab] = useState(0);
@@ -29,10 +28,9 @@ export default function Notifications() {
         const res = await axios.get(
           `${import.meta.env.VITE_SERVER_API}/notifications/${userValue.id}`
         );
-        const { data, success, message } = res.data;
+        const { data, success } = res.data;
 
         if (success) {
-          toast.success(message);
           setListNoti(data);
           setListNotiNotRead(data.filter((item) => item.is_read === false));
         }
