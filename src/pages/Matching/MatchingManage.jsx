@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import authorizedAxiosInstance from "../../utils/authorizedAxios";
 import { toast } from "react-toastify";
 import moment from "moment";
+import ModalDeleteClient from "../../components/ModalDeleteClient";
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
@@ -25,20 +26,31 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 
-// function createData(name, calories, fat, carbs, protein) {
-//   return { name, calories, fat, carbs, protein };
-// }
-
 export default function MatchingManage() {
+  const [open, setOpen] = useState(false);
+  const [selectedMatchId, setSelectedMatchId] = useState(null);
   const [matchesUser, setMatchesUser] = useState([]);
 
-  // const rows = [
-  //   createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  //   createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  //   createData('Eclair', 262, 16.0, 24, 6.0),
-  //   createData('Cupcake', 305, 3.7, 67, 4.3),
-  //   createData('Gingerbread', 356, 16.0, 49, 3.9),
-  // ];
+  const handleCancelMatch = async (matchId) => {
+    setSelectedMatchId(matchId);
+    setOpen(true);
+  }
+
+  const handleConfirmDelete = async () => {
+    try {
+      const response = await authorizedAxiosInstance.delete(`/matches/manage-match/${selectedMatchId}`);
+      if (response.data.success) {
+        toast.success("Đã hủy trận đấu thành công");
+        const res = await authorizedAxiosInstance.get(`/matches/manage-match`);
+        setMatchesUser(res.data.matchesByUser);
+      } else {
+        toast.error(response.data.message || "Không thể hủy trận đấu");
+      }
+    } catch (error) {
+      console.error("Error deleting match:", error);
+      toast.error("Đã xảy ra lỗi khi hủy trận đấu");
+    }
+  }
 
   useEffect(() => {
     const getMatchesByUser = async () => {
@@ -69,7 +81,7 @@ export default function MatchingManage() {
             </TableHead>
             <TableBody>
               {
-                matchesUser.length > 0 ? matchesUser.map((match, index) => (
+                matchesUser?.length > 0 ? matchesUser.map((match, index) => (
                   <StyledTableRow key={match.id}>
                     <StyledTableCell component="th" scope="row">
                       {index + 1}
@@ -84,7 +96,7 @@ export default function MatchingManage() {
                       {moment(match.matchTime, "HH:mm:ss").format("HH:mm")}
                     </StyledTableCell>
                     <StyledTableCell component="th" scope="row">
-                      <Button variant="contained" size="small" sx={{ backgroundColor: "#85110b" }}>Hủy trận</Button>
+                      <Button variant="contained" size="small" onClick={() => handleCancelMatch(match?.id)} sx={{ backgroundColor: "#85110b" }}>Hủy trận</Button>
                     </StyledTableCell>
                   </StyledTableRow>
 
@@ -98,6 +110,8 @@ export default function MatchingManage() {
           </Table>
         </TableContainer>
       </div>
+
+      <ModalDeleteClient open={open} setOpen={setOpen} onConfirm={handleConfirmDelete} confirmButtonColor="error" />
     </div>
   )
 }

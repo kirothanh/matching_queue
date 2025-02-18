@@ -121,7 +121,7 @@ export default function Matching() {
         <div className="flex item-center justify-end mr-3">
           <Button
             variant="contained"
-            sx={{ backgroundColor: "#3b8a58", marginRight: "10px" }}
+            sx={{ backgroundColor: "#3b8a58", marginRight: "10px", zIndex: 0 }}
             onClick={() => navigate("/matching/manage-match")}
           >
             Quản lý trận bóng
