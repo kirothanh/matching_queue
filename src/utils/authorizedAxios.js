@@ -43,10 +43,17 @@ authorizedAxiosInstance.interceptors.response.use(
 
     // Nếu như nhận mã 410 từ BE, thì sẽ gọi api refresh token để làm mới lại accessToken
     const originalRequest = error.config;
-    if (error.response?.status === 410 && originalRequest) {
+    if (error.response?.status === 410 && originalRequest && !originalRequest._retry) {
       if (!refreshTokenPromise) {
         // Lấy refreshToken từ localStorage
         const refreshToken = localStorage.getItem('refreshToken');
+
+        if (!refreshToken) {
+          handleLogoutAPI().then(() => {
+            location.href = '/login';
+          });
+          return Promise.reject(error);
+        }
 
         // Gọi api refresh token
         refreshTokenPromise = refreshTokenAPI(refreshToken)
@@ -55,6 +62,7 @@ authorizedAxiosInstance.interceptors.response.use(
             const { accessToken } = res.data.data;
             localStorage.setItem('accessToken', accessToken);
             authorizedAxiosInstance.defaults.headers.Authorization = `Bearer ${accessToken}`;
+            return authorizedAxiosInstance(originalRequest);
           })
           .catch((_error) => {
             handleLogoutAPI().then(() => {

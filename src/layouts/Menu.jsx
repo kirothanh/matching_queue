@@ -116,7 +116,7 @@ export default function Menu() {
           </ul>
         </div>
       </div>
-      <div className="block lg:hidden p-3 absolute right-0">
+      <div className="block lg:hidden p-3 absolute right-0 z-10">
         {menuOpen ? (
           <IoIosClose
             className="inline-block lg:hidden w-9 h-9 p-1 mt-[10px] cursor-pointer text-lg hover:text-[#346ecf] bg-[#dbeaff] rounded-full"
