@@ -7,6 +7,7 @@ import DOMPurify from 'dompurify';
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from 'react-hook-form';
+import DashBoardShow from './DashBoardShow';
 
 const schema = yup.object().shape({
   content: yup
@@ -55,12 +56,12 @@ export default function Dashboard() {
         }
       });
 
-      // Gửi dữ liệu lên backend
-      console.log('Filtered Content:', cleanContent);
+      const result = await authorizedAxiosInstance.post("/article/create", { content: cleanContent });
 
-      // Gửi nội dung lên backend
-      console.log('content: ', data.content);
+      console.log('result: ', result);
+
       toast.success("Đăng bài thành công!");
+      handleCancel();
     } catch (error) {
       console.error("Validation failed:", error);
       setError("content", { message: error.message });
@@ -75,8 +76,8 @@ export default function Dashboard() {
   };
 
   return (
-    <>
-      <div className='p-4 relative max-w-[1000px] mx-auto'>
+    <div className='h-screen flex flex-col w-full'>
+      <div className='p-4 relative w-full max-w-[1000px] mx-auto'>
         <form onSubmit={handleSubmit(onSubmit)}>
           {errors.content && <p className="text-red-500 text-sm mt-2">{errors.content.message}</p>}
           <Editor
@@ -119,6 +120,9 @@ export default function Dashboard() {
           </div>
         </form>
       </div>
-    </>
+
+      {/* Dashboard Show Full */}
+      <DashBoardShow />
+    </div>
   );
 }
