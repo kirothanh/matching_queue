@@ -22,6 +22,7 @@ import MatchingManage from "./pages/Matching/MatchingManage";
 import Notifications from "./pages/Notifications";
 import MatchingDetail from "./pages/Matching/MatchingDetail";
 import Loading from "./components/Loading";
+import useCurrentUser from "./hooks/useCurrentUser";
 // import SuperAdminLayout from "./layouts/SuperAdminLayout";
 
 const LoginPage = lazy(() => import("./pages/Login"));
@@ -29,12 +30,16 @@ const RegisterPage = lazy(() => import("./pages/Register"));
 
 export default function App() {
   const dispatch = useDispatch();
+  const user = useCurrentUser();
+  console.log('user: ', user);
   const notifications = useSelector((state) => state.notifications.list);
 
   useEffect(() => {
-    // Gọi API để lấy thông tin user khi ứng dụng load
-    dispatch(getUserProfile());
-  }, [dispatch]);
+    if (!user?.data?.id) {
+      // Gọi API để lấy thông tin user khi ứng dụng load
+      dispatch(getUserProfile());
+    }
+  }, [dispatch, user]);
 
   useEffect(() => {
     if (notifications.length > 0) {

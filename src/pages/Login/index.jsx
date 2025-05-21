@@ -50,12 +50,13 @@ export default function Login() {
     const accessToken = urlParams.get("accessToken");
     const refreshToken = urlParams.get("refreshToken");
     if (accessToken) {
+
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
 
       toast.success("Đăng nhập thành công!", {
         position: "top-right",
-        autoClose: 200,
+        autoClose: 1000,
         onClose: () => navigate("/"),
       });
     } else {

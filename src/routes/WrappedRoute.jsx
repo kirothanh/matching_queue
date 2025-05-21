@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 
 /* eslint-disable react/prop-types */
 export default function WrappedRoute({ element }) {
-  const { data: userValue } = useSelector((state) => state.user.userValue);
+  const { data: userValue } = useSelector((state) => state?.user?.userValue);
   const isLogin = authMiddleware();
   const navigate = useNavigate();
   const location = useLocation();
