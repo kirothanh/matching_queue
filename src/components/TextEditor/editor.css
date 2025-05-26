@@ -1,0 +1,38 @@
+/* editor.css */
+
+/* Giới hạn chiều cao của vùng soạn thảo CKEditor */
+.ck-editor__editable {
+  max-height: 300px !important; /* Thay đổi giá trị này theo ý muốn */
+  overflow-y: auto !important;
+  min-height: 100px !important; /* Chiều cao tối thiểu */
+}
+
+/* Tùy chỉnh scrollbar cho webkit browsers */
+.ck-editor__editable::-webkit-scrollbar {
+  width: 8px;
+}
+
+.ck-editor__editable::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.ck-editor__editable::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.ck-editor__editable::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Nếu bạn muốn giới hạn cả container */
+.editor-container {
+  max-height: 400px;
+}
+
+/* Hoặc style cho specific class */
+.fixed-height-editor .ck-editor__editable {
+  max-height: 250px !important;
+  overflow-y: auto !important;
+}
