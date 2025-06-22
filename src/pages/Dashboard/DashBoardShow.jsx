@@ -20,7 +20,7 @@ const DashBoardShow = () => {
   }, []);
 
   return (
-    <div className="p-4 max-w-[1000px] mx-auto space-y-6 max-h-screen overflow-y-scroll">
+    <div className="p-4 max-w-[1000px] mx-auto space-y-6">
       {articles.map((article) => (
         <div
           key={article.id}

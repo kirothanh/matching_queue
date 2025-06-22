@@ -5,9 +5,9 @@ import Menu from "./Menu";
 
 export default function GuestLayout() {
   return (
-    <div className="flex relative">
+    <div className="flex relative h-screen">
       <Menu />
-      <div className="w-full">
+      <div className="w-full overflow-y-auto">
         <Outlet />
       </div>
     </div>

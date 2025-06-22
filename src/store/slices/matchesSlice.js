@@ -42,9 +42,9 @@ export const matchesSlice = createSlice({
 
       // Update matchesValue
       if (Array.isArray(state.matchesValue)) {
-        state.matchesValue = state.matchesValue.map((match) =>
-          match.id === matchId ? { ...match, usersJoin } : match
-        );
+        state.matchesValue = state.matchesValue.map((match) => {
+          return Number(match.id) === Number(matchId) ? { ...match, usersJoin } : match
+        });
       } else {
         console.error("matchesValue is not an array!", state.matchesValue);
       }
@@ -53,7 +53,7 @@ export const matchesSlice = createSlice({
       const updatedModifiedMatches = { ...state.modifiedMatches };
       Object.keys(updatedModifiedMatches).forEach((key) => {
         updatedModifiedMatches[key] = updatedModifiedMatches[key].map((match) =>
-          match.id === matchId ? { ...match, usersJoin } : match
+          Number(match.id) === Number(matchId) ? { ...match, usersJoin } : match
         );
       });
       state.modifiedMatches = updatedModifiedMatches;

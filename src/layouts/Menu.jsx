@@ -55,7 +55,7 @@ export default function Menu() {
         className={`lg:flex flex-col gap-y-5 overflow-y-auto border-r bg-gray-50 border-gray-200 z-40 w-64 lg:w-80 h-screen pb-16 sm:pb-10 pt-1 transition-transform ${menuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
           } fixed lg:relative`}
       >
-        <div className="mt-[20px] flex grow flex-col px-3 py-4 bg-gray-50">
+        <div className="mt-[20px] flex grow flex-col px-3 py-4 bg-gray-50 h-full">
           <div
             className="flex items-center pl-2.5 mb-5 cursor-pointer"
             onClick={() => navigate("/")}

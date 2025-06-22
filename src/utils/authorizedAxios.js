@@ -1,10 +1,13 @@
 import axios from 'axios';
-import { toast } from 'react-toastify';
-import { handleLogoutAPI, refreshTokenAPI } from '../api/index';
+// import { toast } from 'react-toastify';
+import { refreshTokenAPI } from '../api/index';
 
 let authorizedAxiosInstance = axios.create({
   baseURL: `${import.meta.env.VITE_SERVER_API}`,
 });
+let isRefreshing = false;
+let tokenListeners = [];
+
 authorizedAxiosInstance.defaults.timeout = 1000 * 60 * 10;
 
 // Add a request interceptor
@@ -22,72 +25,53 @@ authorizedAxiosInstance.interceptors.request.use(
   }
 );
 
-// Khởi tạo 1 cái promise cho việc gọi api refresh_token
-let refreshTokenPromise = null;
-
 // Add a response interceptor
 authorizedAxiosInstance.interceptors.response.use(
-  (response) => {
-    // Any status code that lie within the range of 2xx cause this function to trigger
-    // Do something with response data
-    return response;
-  },
-  (error) => {
+  (response) => response,
+  async (error) => {
     // Nếu như nhận mã 401 từ BE, thì sẽ gọi api logout luôn
-    if (error.response?.status === 401) {
-      handleLogoutAPI().then(() => {
+    // if (error.response?.status === 401) {
+    //   handleLogoutAPI().then(() => {
 
-        location.href = '/login';
-      });
-    }
+    //     location.href = '/login';
+    //   });
+    // }
+    const refreshToken = localStorage.getItem("refreshToken");
+    const shouldRenewToken = error.response?.status === 410 && refreshToken;
 
-    // Nếu như nhận mã 410 từ BE, thì sẽ gọi api refresh token để làm mới lại accessToken
-    const originalRequest = error.config;
-    if (error.response?.status === 410 && originalRequest && !originalRequest._retry) {
-      if (!refreshTokenPromise) {
-        // Lấy refreshToken từ localStorage
-        const refreshToken = localStorage.getItem('refreshToken');
+    if (shouldRenewToken) {
+      if (shouldRenewToken) {
+        if (!isRefreshing) {
+          isRefreshing = true;
+          try {
+            const res = await refreshTokenAPI(refreshToken);
+            const data = res.data.data;
 
-        if (!refreshToken) {
-          handleLogoutAPI().then(() => {
-            location.href = '/login';
-          });
-          return Promise.reject(error);
+            localStorage.setItem("accessToken", data.accessToken);
+            localStorage.setItem("refreshToken", data.refreshToken);
+
+            tokenListeners.forEach((listener) => listener());
+            tokenListeners = [];
+
+            isRefreshing = false;
+
+          } catch (error) {
+            isRefreshing = false;
+
+            tokenListeners = [];
+
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+          }
         }
-
-        // Gọi api refresh token
-        refreshTokenPromise = refreshTokenAPI(refreshToken)
-          .then((res) => {
-            // Lấy và gán lại accessToken vào localStora
-            const { accessToken } = res.data.data;
-            localStorage.setItem('accessToken', accessToken);
-            authorizedAxiosInstance.defaults.headers.Authorization = `Bearer ${accessToken}`;
-            return authorizedAxiosInstance(originalRequest);
-          })
-          .catch((_error) => {
-            handleLogoutAPI().then(() => {
-              location.href = '/login';
-            });
-
-            return Promise.reject(_error);
-          })
-          .finally(() => {
-            refreshTokenPromise = null;
+      } else {
+        return new Promise((resolve) => {
+          tokenListeners.push(() => {
+            resolve(authorizedAxiosInstance(error.config));
           });
+        });
       }
-
-      // Cuối cùng mới return cái refreshTokenPromise trong trường hợp success
-      return refreshTokenPromise.then(() => {
-        return authorizedAxiosInstance(originalRequest);
-      });
     }
-
-    if (error.response?.status !== 410) {
-      toast.error(error.response?.data?.message || error?.message);
-    }
-
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
     return Promise.reject(error);
   }
 );

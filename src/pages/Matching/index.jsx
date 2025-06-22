@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { MdOutlineStadium } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
@@ -12,13 +12,17 @@ import TitleElement from "../../components/TitleElement";
 import { io } from "socket.io-client";
 import { postNoti } from "../../store/slices/notificationsSlice";
 import Loading from "../../components/Loading";
+import JoinMatchModal from "../../components/JoinMatchModal";
+import useCurrentUser from "../../hooks/useCurrentUser";
 
 const socket = io(import.meta.env.VITE_SOCKET_SERVER_URL);
 
 const getDetailPartner = (match) => {
-  const findPartner = match?.usersJoin?.find((user) => user?.id === match?.partner_id)
-  return findPartner
-}
+  const findPartner = match?.usersJoin?.find(
+    (user) => user?.id === match?.partner_id
+  );
+  return findPartner;
+};
 
 export default function Matching() {
   const navigate = useNavigate();
@@ -26,43 +30,50 @@ export default function Matching() {
   // const matches = useSelector((state) => state.matches.matchesValue);
   const loading = useSelector((state) => state.matches.loading);
   const modifiedMatches = useSelector((state) => state.matches.modifiedMatches);
+  // console.log('modifiedMatches: ', modifiedMatches)
   const { data: userValue } = useSelector((state) => state.user.userValue);
+  const [openJoinMatchModal, setOpenJoinMatchModal] = useState(false);
+  // const user = useCurrentUser();
 
-  const handleJoinMatch = async (matchId, partnerId) => {
-    if (!partnerId) {
-      toast.error("User data is not available yet.");
-      return;
-    }
+  // const handleJoinMatch = async (matchId, partnerId) => {
+  //   if (!partnerId) {
+  //     toast.error("User data is not available yet.");
+  //     return;
+  //   }
 
-    try {
-      const res = await authorizedAxiosInstance.post("/matches/join", {
-        id: matchId,
-        partner_id: partnerId,
-      });
+  //   try {
+  //     const res = await authorizedAxiosInstance.post("/matches/join", {
+  //       id: matchId,
+  //       partner_id: partnerId,
+  //     });
 
-      if (res.data.success) {
-        toast.success(res.data.message);
+  //     if (res.data.success) {
+  //       toast.success(res.data.message);
 
-        socket.emit("joinRoom", { matchId, partnerId });
-      }
+  //       socket.emit("joinRoom", { matchId, partnerId });
+  //     }
 
-      const listUserMatch = res.data.listUserMatch;
-      dispatch(updateUsersJoin({ matchId, usersJoin: listUserMatch }));
-    } catch (error) {
-      if (error.status === 404) {
-        navigate("/club/create");
-      }
-    }
-  };
+  //     const listUserMatch = res.data.listUserMatch;
+  //     dispatch(updateUsersJoin({ matchId, usersJoin: listUserMatch }));
+  //   } catch (error) {
+  //     if (error.status === 404) {
+  //       navigate("/club/create");
+  //     }
+  //   }
+  // };
 
   useEffect(() => {
     if (modifiedMatches && userValue?.id) {
-      Object.values(modifiedMatches).flat().forEach(match => {
-        if (match.createdBy === userValue?.id ||
-          match.usersJoin?.some(user => user.id === userValue?.id)) {
-          socket.emit("joinRoom", { matchId: match.id });
-        }
-      });
+      Object.values(modifiedMatches)
+        .flat()
+        .forEach((match) => {
+          if (
+            match.createdBy === userValue?.id ||
+            match.usersJoin?.some((user) => user.id === userValue?.id)
+          ) {
+            socket.emit("joinRoom", { matchId: match.id });
+          }
+        });
     }
   }, [modifiedMatches, userValue?.id]);
 
@@ -74,20 +85,23 @@ export default function Matching() {
     socket.on("userJoined", ({ message, matchId, users }) => {
       const notification = {
         userId: userValue?.id,
-        title: message
-      }
+        title: message,
+      };
       dispatch(postNoti(notification));
       dispatch(updateUsersJoin({ matchId, usersJoin: users }));
     });
 
     socket.on("matchCreated", (newMatch) => {
-      const formattedDate = moment.utc(newMatch.matchDate).local().format("DD/MM/YYYY");
-      const message = `Trận đấu mới vào ngày ${formattedDate} vừa được tạo!`
+      const formattedDate = moment
+        .utc(newMatch.matchDate)
+        .local()
+        .format("DD/MM/YYYY");
+      const message = `Trận đấu mới vào ngày ${formattedDate} vừa được tạo!`;
 
       const notification = {
         userId: userValue.id,
-        title: message
-      }
+        title: message,
+      };
 
       dispatch(postNoti(notification));
       // dispatch(addMatch(newMatch));
@@ -96,8 +110,8 @@ export default function Matching() {
     socket.on("partnerConfirmed", ({ message }) => {
       const notification = {
         userId: userValue?.id,
-        title: message
-      }
+        title: message,
+      };
       dispatch(postNoti(notification));
       dispatch(getMatches());
     });
@@ -145,7 +159,9 @@ export default function Matching() {
                 <h3 className="ml-[40px] my-2 transform text-xl font-bold text-[#37003c]">
                   {moment(key).format("DD/MM/YYYY")}
                   {isPast && (
-                    <span className="text-red-500 text-sm ml-2">(Ngày đã qua)</span>
+                    <span className="text-red-500 text-sm ml-2">
+                      (Ngày đã qua)
+                    </span>
                   )}
                 </h3>
                 {modifiedMatches[key].map((match) => (
@@ -159,20 +175,25 @@ export default function Matching() {
                       </div>
                       <div className="flex justify-center items-center gap-[10px]">
                         <div className="flex justify-center items-center gap-[10px] ">
-                          <img src={match?.club?.imageUrl} className="w-[30px] " />
+                          <img
+                            src={match?.club?.imageUrl}
+                            className="w-[30px] "
+                          />
                         </div>
                         <div className="border py-1 px-2 rounded-md">
                           {moment(match.matchTime, "HH:mm:ss").format("HH:mm")}
                         </div>
-                        {
-                          getDetailPartner(match)?.imageUrl ? <Avatar
+                        {getDetailPartner(match)?.imageUrl ? (
+                          <Avatar
                             sx={{
                               width: "29px",
                               height: "29px",
                             }}
                             alt={getDetailPartner(match)?.name}
                             src={getDetailPartner(match)?.imageUrl}
-                          /> : <div>
+                          />
+                        ) : (
+                          <div>
                             <AvatarGroup
                               max={4}
                               sx={{
@@ -193,8 +214,7 @@ export default function Matching() {
                               ))}
                             </AvatarGroup>
                           </div>
-                        }
-
+                        )}
                       </div>
                       <div className="flex justify-center items-center gap-[10px]">
                         <MdOutlineStadium className="text-lg" />
@@ -219,18 +239,26 @@ export default function Matching() {
                           </span>
                         ) : (
                           <>
+
                             <button
                               className={`border border-gray-300 text-black py-1 px-4 rounded capitalize ${isPast
                                 ? "bg-gray-300 text-gray-600 cursor-not-allowed"
                                 : "group-hover:bg-white group-hover:text-[#37003c]"
                                 }`}
                               disabled={isPast}
-                              onClick={() =>
-                                handleJoinMatch(match.id, userValue.id)
+                              onClick={
+                                () => setOpenJoinMatchModal(true)
+                                // handleJoinMatch(match.id, userValue.id)
                               }
                             >
                               Join
                             </button>
+
+                            <JoinMatchModal
+                              open={openJoinMatchModal}
+                              onClose={() => setOpenJoinMatchModal(false)}
+                              matchId={match?.id}
+                            />
                             {!isPast && (
                               <FaArrowRightLong className="group-hover:translate-x-2 transition-transform duration-300" />
                             )}
@@ -241,7 +269,7 @@ export default function Matching() {
                   </div>
                 ))}
               </div>
-            )
+            );
           })}
       </div>
     </div>

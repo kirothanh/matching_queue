@@ -26,6 +26,7 @@ export default function Login() {
     try {
       const result = await dispatch(getUserFromLogin(data));
       const { success, message, data: userInfo } = result.payload;
+      console.log('userInfo: ', userInfo)
       if (success === false) {
         toast.error(message);
       } else {

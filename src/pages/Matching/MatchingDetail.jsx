@@ -94,6 +94,8 @@ export default function MatchingDetail() {
     setListClub(findClubs);
   }, [modifiedMatches]);
 
+  console.log('modifiedMatches: ', modifiedMatches);
+
   useEffect(() => {
     socket.on("partnerConfirmed", ({ message }) => {
       dispatch(addNotification({ message }));
