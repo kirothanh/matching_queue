@@ -1,11 +1,11 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { authMiddleware } from "../utils/authMiddleware";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import useCurrentUser from "../hooks/useCurrentUser";
 
 /* eslint-disable react/prop-types */
 export default function WrappedRoute({ element }) {
-  const { data: userValue } = useSelector((state) => state?.user?.userValue);
+  const user = useCurrentUser();
   const isLogin = authMiddleware();
   const navigate = useNavigate();
   const location = useLocation();
@@ -18,7 +18,7 @@ export default function WrappedRoute({ element }) {
     if (!isLogin) {
       navigate("/login");
     } else {
-      const role = +userValue?.role;
+      const role = +user?.data?.role;
 
       if (role === 1 && !location.pathname.startsWith("/admin")) {
         navigate("/admin");
@@ -26,7 +26,7 @@ export default function WrappedRoute({ element }) {
         navigate("/");
       }
     }
-  }, [isLogin, userValue?.role, location.pathname, navigate]);
+  }, [isLogin, user?.data?.role, location.pathname, navigate]);
 
   return isLogin ? (
     <div>{element}</div>

@@ -11,7 +11,6 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import authorizedAxiosInstance from "../../utils/authorizedAxios";
 import moment from "moment";
@@ -20,11 +19,12 @@ import { useNavigate } from "react-router-dom";
 import { DatePicker, LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { io } from "socket.io-client";
+import useCurrentUser from "../../hooks/useCurrentUser";
 
 const socket = io(import.meta.env.VITE_SOCKET_SERVER_URL);
 
 export default function MatchingCreate() {
-  const { data: userValue } = useSelector((state) => state.user.userValue);
+  const user = useCurrentUser();
   const [stadiums, setStadiums] = useState([]);
   const [clubs, setClubs] = useState([]);
   const navigate = useNavigate();
@@ -55,7 +55,7 @@ export default function MatchingCreate() {
       clubId: "",
       matchDate: "",
       matchTime: "",
-      contactNumber: userValue?.phone || "",
+      contactNumber: user?.data?.phone || "",
       description: "",
     },
     resolver: yupResolver(validationSchema),
@@ -85,7 +85,7 @@ export default function MatchingCreate() {
         toast.success(res.data.message);
 
         socket.emit("matchCreated", res.data.data);
-        socket.emit("joinRoom", { matchId: res.data.data.id, partnerId: userValue.id });
+        socket.emit("joinRoom", { matchId: res.data.data.id, partnerId: user?.data.id });
         navigate("/matching");
       }
     } catch (error) {
@@ -94,10 +94,10 @@ export default function MatchingCreate() {
   };
 
   useEffect(() => {
-    if (userValue?.phone) {
-      setValue("contactNumber", userValue.phone, { shouldValidate: true });
+    if (user?.data?.phone) {
+      setValue("contactNumber", user?.data.phone, { shouldValidate: true });
     }
-  }, [userValue]);
+  }, [user?.data]);
 
   useEffect(() => {
     const getStadiums = async () => {

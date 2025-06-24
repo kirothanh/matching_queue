@@ -3,10 +3,8 @@ import { FaArrowRightLong } from "react-icons/fa6";
 import { MdOutlineStadium } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { getMatches, updateUsersJoin } from "../../store/slices/matchesSlice";
-import authorizedAxiosInstance from "../../utils/authorizedAxios";
 import moment from "moment";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
 import { Avatar, AvatarGroup, Button } from "@mui/material";
 import TitleElement from "../../components/TitleElement";
 import { io } from "socket.io-client";
@@ -31,8 +29,9 @@ export default function Matching() {
   const loading = useSelector((state) => state.matches.loading);
   const modifiedMatches = useSelector((state) => state.matches.modifiedMatches);
   // console.log('modifiedMatches: ', modifiedMatches)
-  const { data: userValue } = useSelector((state) => state.user.userValue);
+  const user = useCurrentUser();
   const [openJoinMatchModal, setOpenJoinMatchModal] = useState(false);
+  const [selectedMatchId, setSelectedMatchId] = useState(null);
   // const user = useCurrentUser();
 
   // const handleJoinMatch = async (matchId, partnerId) => {
@@ -63,19 +62,19 @@ export default function Matching() {
   // };
 
   useEffect(() => {
-    if (modifiedMatches && userValue?.id) {
+    if (modifiedMatches && user?.data?.id) {
       Object.values(modifiedMatches)
         .flat()
         .forEach((match) => {
           if (
-            match.createdBy === userValue?.id ||
-            match.usersJoin?.some((user) => user.id === userValue?.id)
+            match.createdBy === user?.data?.id ||
+            match.usersJoin?.some((user) => user.id === user?.data?.id)
           ) {
             socket.emit("joinRoom", { matchId: match.id });
           }
         });
     }
-  }, [modifiedMatches, userValue?.id]);
+  }, [modifiedMatches, user?.data?.id]);
 
   useEffect(() => {
     dispatch(getMatches());
@@ -84,7 +83,7 @@ export default function Matching() {
   useEffect(() => {
     socket.on("userJoined", ({ message, matchId, users }) => {
       const notification = {
-        userId: userValue?.id,
+        userId: user?.data?.id,
         title: message,
       };
       dispatch(postNoti(notification));
@@ -99,7 +98,7 @@ export default function Matching() {
       const message = `Trận đấu mới vào ngày ${formattedDate} vừa được tạo!`;
 
       const notification = {
-        userId: userValue.id,
+        userId: user?.data.id,
         title: message,
       };
 
@@ -109,7 +108,7 @@ export default function Matching() {
 
     socket.on("partnerConfirmed", ({ message }) => {
       const notification = {
-        userId: userValue?.id,
+        userId: user?.data?.id,
         title: message,
       };
       dispatch(postNoti(notification));
@@ -121,7 +120,7 @@ export default function Matching() {
       socket.off("matchCreated");
       socket.off("partnerConfirmed");
     };
-  }, [userValue, dispatch]);
+  }, [user?.data, dispatch]);
 
   if (loading) {
     return <Loading />;
@@ -232,8 +231,8 @@ export default function Matching() {
                       </button>
                       <div className="flex justify-center items-center gap-[10px] mr-2">
                         {match?.usersJoin?.some(
-                          (item) => item.createdBy === userValue?.id
-                        ) || match?.createdBy === userValue?.id ? (
+                          (item) => item.createdBy === user?.data?.id
+                        ) || match?.createdBy === user?.data?.id ? (
                           <span className="text-green-500 font-semibold">
                             Already Joined
                           </span>
@@ -247,8 +246,11 @@ export default function Matching() {
                                 }`}
                               disabled={isPast}
                               onClick={
-                                () => setOpenJoinMatchModal(true)
-                                // handleJoinMatch(match.id, userValue.id)
+                                () => {
+                                  setSelectedMatchId(match.id);
+                                  setOpenJoinMatchModal(true);
+                                }
+                                // handleJoinMatch(match.id, user?.data.id)
                               }
                             >
                               Join
@@ -257,7 +259,7 @@ export default function Matching() {
                             <JoinMatchModal
                               open={openJoinMatchModal}
                               onClose={() => setOpenJoinMatchModal(false)}
-                              matchId={match?.id}
+                              matchId={selectedMatchId}
                             />
                             {!isPast && (
                               <FaArrowRightLong className="group-hover:translate-x-2 transition-transform duration-300" />

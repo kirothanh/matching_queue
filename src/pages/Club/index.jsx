@@ -6,12 +6,12 @@ import { toast } from "react-toastify";
 import * as Yup from "yup";
 import authorizedAxiosInstance from "../../utils/authorizedAxios";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import useCurrentUser from "../../hooks/useCurrentUser";
 
 export default function Club() {
   const [imageUrl, setImageUrl] = useState(null);
   const navigate = useNavigate();
-  const { data: userValue } = useSelector((state) => state.user.userValue);
+  const user = useCurrentUser();
 
   const stadiumSchema = Yup.object().shape({
     name: Yup.string().required("Tên đội bóng không được để trống."),
@@ -29,7 +29,7 @@ export default function Club() {
       name: "",
       description: "",
       imageUrl: null,
-      created_by: userValue?.id
+      created_by: user?.data?.id
     },
     resolver: yupResolver(stadiumSchema),
   });

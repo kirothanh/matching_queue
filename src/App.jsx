@@ -31,7 +31,6 @@ const RegisterPage = lazy(() => import("./pages/Register"));
 export default function App() {
   const dispatch = useDispatch();
   const user = useCurrentUser();
-  console.log('user: ', user);
   const notifications = useSelector((state) => state.notifications.list);
 
   useEffect(() => {

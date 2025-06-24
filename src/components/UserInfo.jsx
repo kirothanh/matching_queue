@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { getUserProfile } from "../store/slices/userSlice";
 import authorizedAxiosInstance from "../utils/authorizedAxios";
+import useCurrentUser from "../hooks/useCurrentUser";
 
 export default function UserInfo() {
   const dispatch = useDispatch();
-  const { data: userValue } = useSelector((state) => state.user.userValue);
+  const user = useCurrentUser();
   const [isEditing, setIsEditing] = useState(false);
   const [updatedUser, setUpdatedUser] = useState({
     name: "",
@@ -21,14 +22,14 @@ export default function UserInfo() {
   }, [dispatch]);
 
   useEffect(() => {
-    if (userValue) {
+    if (user?.data) {
       setUpdatedUser({
-        name: userValue.name,
-        email: userValue.email,
-        phone: userValue.phone,
+        name: user?.data.name,
+        email: user?.data.email,
+        phone: user?.data.phone,
       });
     }
-  }, [userValue]);
+  }, [user?.data]);
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -37,9 +38,9 @@ export default function UserInfo() {
   const handleCancel = () => {
     setIsEditing(false);
     setUpdatedUser({
-      name: userValue.name,
-      email: userValue.email,
-      phone: userValue.phone,
+      name: user?.data.name,
+      email: user?.data.email,
+      phone: user?.data.phone,
     });
     setNewAvatarFile(null);
   };
@@ -59,7 +60,7 @@ export default function UserInfo() {
     formData.append("email", updatedUser.email);
     formData.append("phone", updatedUser.phone);
 
-    const avatarKey = userValue?.avatar ? userValue.avatar.split("/").pop() : null;
+    const avatarKey = user?.data?.avatar ? user?.data.avatar.split("/").pop() : null;
     if (newAvatarFile) {
       formData.append("avatar", newAvatarFile);
       formData.append("oldKey", avatarKey);
@@ -81,9 +82,9 @@ export default function UserInfo() {
     <div className="border max-w-5xl p-6 bg-white rounded-lg shadow-md">
       <form onSubmit={handleSubmit}>
         <div className="mb-[20px] flex flex-col sm:flex-row items-center">
-          {userValue?.avatar ? (
+          {user?.data?.avatar ? (
             <img
-              src={userValue?.avatar}
+              src={user?.data?.avatar}
               alt="avatar"
               className="w-28 h-28 bg-gray-200 p-2 rounded-full"
             />

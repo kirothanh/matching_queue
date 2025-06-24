@@ -4,7 +4,7 @@ import SuperAdminLayout from "../layouts/SuperAdminLayout";
 import GuestLayout from "../layouts/GuestLayout";
 import { authMiddleware } from "../utils/authMiddleware";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import useCurrentUser from "../hooks/useCurrentUser";
 
 const renderLayout = (role, element) => {
   switch (role) {
@@ -19,8 +19,8 @@ const renderLayout = (role, element) => {
 
 /* eslint-disable react/prop-types */
 export default function PrivateRoute({ element }) {
-  const { data: userValue } = useSelector((state) => state.user.userValue);
-  const role = userValue?.role;
+  const user = useCurrentUser();
+  const role = user?.data?.role;
   const isLogin = authMiddleware();
   // const expiredLogin = false;
   const navigate = useNavigate();

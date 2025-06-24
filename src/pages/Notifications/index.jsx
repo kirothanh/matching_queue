@@ -5,14 +5,14 @@ import NotificationTabs from "./NotificationTabs";
 import CustomTabPanel from "../../components/CustomTabPanel";
 import NotificationItem from "./NotificationItem";
 import NotificationActions from "./NotificationActions";
-import { useSelector } from "react-redux";
 import axios from "axios";
+import useCurrentUser from "../../hooks/useCurrentUser";
 
 export default function Notifications() {
   const [valueTab, setValueTab] = useState(0);
   const [listNoti, setListNoti] = useState([]);
   const [listNotiNotRead, setListNotiNotRead] = useState([]);
-  const { data: userValue } = useSelector((state) => state.user.userValue);
+  const user = useCurrentUser();
 
   const handleChange = (event, newValue) => {
     setValueTab(newValue);
@@ -20,13 +20,13 @@ export default function Notifications() {
 
   useEffect(() => {
     const getNoti = async () => {
-      if (!userValue?.id) {
+      if (!user?.data?.id) {
         return <div>Loading notifications...</div>;
       }
 
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_SERVER_API}/notifications/${userValue.id}`
+          `${import.meta.env.VITE_SERVER_API}/notifications/${user?.data.id}`
         );
         const { data, success } = res.data;
 
@@ -39,7 +39,7 @@ export default function Notifications() {
       }
     };
     getNoti();
-  }, [userValue?.id]);
+  }, [user?.data?.id]);
 
   return (
     <>
