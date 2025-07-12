@@ -23,6 +23,8 @@ import Notifications from "./pages/Notifications";
 import MatchingDetail from "./pages/Matching/MatchingDetail";
 import Loading from "./components/Loading";
 import useCurrentUser from "./hooks/useCurrentUser";
+import UsersManage from "./pages/admin/Users";
+import UsersCreateAndDelete from "./pages/admin/Users/UsersCreateAndDelete";
 // import SuperAdminLayout from "./layouts/SuperAdminLayout";
 
 const LoginPage = lazy(() => import("./pages/Login"));
@@ -78,7 +80,35 @@ export default function App() {
         },
         {
           path: "stadium/edit/:id",
-          element: <WrappedRoute element={<StadiumCreate />} />,
+          element: (
+            <Suspense fallback={<Loading />}>
+              <WrappedRoute element={<StadiumCreate />} />
+            </Suspense>
+          ),
+        },
+        {
+          path: "users",
+          element: (
+            <Suspense fallback={<Loading />}>
+              <WrappedRoute element={<UsersManage />} />
+            </Suspense>
+          ),
+        },
+        {
+          path: "users/create",
+          element: (
+            <Suspense fallback={<Loading />}>
+              <WrappedRoute element={<UsersCreateAndDelete />} />
+            </Suspense>
+          ),
+        },
+        {
+          path: "users/edit/:id",
+          element: (
+            <Suspense fallback={<Loading />}>
+              <WrappedRoute element={<UsersCreateAndDelete />} />
+            </Suspense>
+          ),
         }
       ],
     },

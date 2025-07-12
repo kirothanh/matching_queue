@@ -27,3 +27,28 @@ export const getArticlesByUserId = async (id) => {
   const url = `/article/${id}`;
   return await authorizedAxiosInstance.get(url);
 }
+
+export const getUsers = async () => {
+  const url = `/admin/users`;
+  return await authorizedAxiosInstance.get(url);
+}
+
+export const getUserById = async (id) => {
+  const url = `/admin/users/${id}`;
+  return await authorizedAxiosInstance.get(url);
+}
+
+export const createUser = async (data) => {
+  const url = `/admin/users`;
+  return await authorizedAxiosInstance.post(url, data);
+}
+
+export const updateUser = async (id, data) => {
+  const url = `/admin/users/${id}`;
+  return await authorizedAxiosInstance.patch(url, data);
+}
+
+export const uploadImage = async (data) => {
+  const url = `/upload/cloudinary`;
+  return await authorizedAxiosInstance.post(url, { imageBase64: data });
+}

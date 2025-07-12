@@ -1,6 +1,6 @@
 import { MdStadium } from "react-icons/md";
 import { CiLogin } from "react-icons/ci";
-import { FaHome } from "react-icons/fa";
+import { FaHome, FaUser } from "react-icons/fa";
 import authorizedAxiosInstance from "../utils/authorizedAxios";
 import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -11,6 +11,7 @@ import { useState } from "react";
 const MenuItems = [
   { name: "Dashboard", icon: FaHome, path: "/admin" },
   { name: "Quản lý sân bóng", icon: MdStadium, path: "/admin/stadium" },
+  { name: "Quản lý người dùng", icon: FaUser, path: "/admin/users" },
 ];
 
 export default function MenuAdmin() {

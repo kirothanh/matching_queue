@@ -19,10 +19,10 @@ export default function Stadium() {
 
   const columns = useMemo(() => [
     { field: "id", headerName: "ID", width: 70 },
-    { field: "name", headerName: "Stadium name", width: 200 },
+    { field: "name", headerName: "Tên sân bóng", width: 200 },
     {
       field: "fullAddress",
-      headerName: "Full address",
+      headerName: "Địa chỉ",
       description: "This column has a value getter and is not sortable.",
       sortable: false,
       flex: 1,
@@ -49,21 +49,22 @@ export default function Stadium() {
 
   const paginationModel = { page: 0, pageSize: 5 };
 
-  useEffect(() => {
-    const getStadiums = async () => {
-      const res = await authorizedAxiosInstance.get("/admin/stadiums/");
-      setStadiums(res.data.data);
-    };
-    getStadiums();
-  }, []);
+  // useEffect(() => {
+  //   const getStadiums = async () => {
+  //     const res = await authorizedAxiosInstance.get("/admin/stadiums/");
+  //     setStadiums(res.data.data);
+  //   };
+  //   getStadiums();
+  // }, []);
+
+  const getStadiums = async () => {
+    const res = await authorizedAxiosInstance.get("/admin/stadiums/");
+    setStadiums(res.data.data);
+  };
 
   useEffect(() => {
-    const getStadiums = async () => {
-      const res = await authorizedAxiosInstance.get("/admin/stadiums/");
-      setStadiums(res.data.data);
-    };
     getStadiums();
-  }, [id]);
+  }, []);
 
   return (
     <>
@@ -95,7 +96,7 @@ export default function Stadium() {
           </Paper>
         </div>
       </div>
-      <ModalDelete open={open} handleClose={handleClose} id={id} setId={setId} />
+      <ModalDelete url={`/admin/stadiums/delete/${id}`} title="sân bóng" open={open} handleClose={handleClose} setId={setId} onDeleted={getStadiums} />
     </>
   );
 }

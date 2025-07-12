@@ -21,15 +21,16 @@ const style = {
   gap: 2
 };
 
-export default function ModalDelete({ open, handleClose, id, setId }) {
+export default function ModalDelete({ url, title, open, handleClose, setId, onDeleted }) {
   const handleDeleteStadium = async () => {
-    const res = await authorizedAxiosInstance.delete(`/admin/stadiums/delete/${id}`);
+    const res = await authorizedAxiosInstance.delete(url);
     if (res.data.success) {
-      toast.success("Xóa sân bóng thành công !");
+      toast.success(`Xóa ${title} thành công !`);
       handleClose();
       setId(null);
+      if (onDeleted) onDeleted();
     } else {
-      toast.error("Xóa sân bóng thất bại !");
+      toast.error(`Xóa ${title} thất bại !`);
     }
   }
 
@@ -46,8 +47,8 @@ export default function ModalDelete({ open, handleClose, id, setId }) {
           Bạn có chắc muốn xóa ?
         </Typography>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
-          <Button onClick={handleDeleteStadium} sx={{ backgroundColor: "red", color: "white" }} >Xóa</Button>
           <Button onClick={handleClose} sx={{ backgroundColor: "#3876d1", color: "white" }}>Hủy</Button>
+          <Button onClick={handleDeleteStadium} sx={{ backgroundColor: "red", color: "white" }} >Xóa</Button>
         </div>
       </Box>
     </Modal>

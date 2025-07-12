@@ -8,7 +8,6 @@ import {
   Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { MdKeyboardArrowLeft } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import * as Yup from "yup";
@@ -16,6 +15,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
 import authorizedAxiosInstance from "../../../utils/authorizedAxios";
 import { Controller, useForm, useWatch } from "react-hook-form";
+import HeaderTitle from "../../../components/HeaderTitle/HeaderTitle";
 
 export default function StadiumCreate() {
   const navigate = useNavigate();
@@ -177,17 +177,7 @@ export default function StadiumCreate() {
 
   return (
     <div>
-      <div className="flex items-center justify-between">
-        <div className="flex items-end gap-x-2">
-          <div
-            className="bg-gray-100 p-1 rounded-lg border border-gray-300 cursor-pointer hover:bg-gray-400"
-            onClick={() => navigate(-1)}
-          >
-            <MdKeyboardArrowLeft className="text-xl" />
-          </div>
-          <h2 className="font-bold text-2xl">{id ? "Chỉnh sửa sân bóng" : "Tạo sân bóng mới"}</h2>
-        </div>
-      </div>
+      <HeaderTitle title="sân bóng" id={id} />
 
       <Box
         display="grid"
