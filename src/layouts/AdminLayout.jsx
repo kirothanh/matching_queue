@@ -4,9 +4,9 @@ import MenuAdmin from "./MenuAdmin";
 
 export default function AdminLayout() {
   return (
-    <div className="flex relative">
+    <div className="flex relative h-screen">
       <MenuAdmin />
-      <div className="w-full p-8"><Outlet /></div>
+      <div className="w-full p-8 overflow-y-auto"><Outlet /></div>
     </div>
   )
 }

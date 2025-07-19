@@ -36,7 +36,7 @@ export default function MenuAdmin() {
     <>
       {menuOpen && (
         <div
-          className="fixed inset-0 bg-black opacity-50 lg:hidden"
+          className="fixed inset-0 bg-black opacity-50 lg:hidden z-10"
           onClick={() => setMenuOpen(false)}
         ></div>
       )}

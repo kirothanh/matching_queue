@@ -52,3 +52,18 @@ export const uploadImage = async (data) => {
   const url = `/upload/cloudinary`;
   return await authorizedAxiosInstance.post(url, { imageBase64: data });
 }
+
+export const getMatchesCount = async () => {
+  const url = `/matches/`;
+  return await authorizedAxiosInstance.get(url);
+}
+
+export const getClubsCount = async () => {
+  const url = `/admin/clubs`;
+  return await authorizedAxiosInstance.get(url);
+}
+
+export const getUsersCount = async () => {
+  const url = `/admin/users`;
+  return await authorizedAxiosInstance.get(url);
+}
