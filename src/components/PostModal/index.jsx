@@ -10,6 +10,7 @@ import { Controller, useForm } from "react-hook-form";
 import { postArticle } from "../../services/articleService";
 import { changeImageType } from "../../utils/changeImageType";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 const style = {
   position: "absolute",
@@ -23,7 +24,7 @@ const style = {
   borderRadius: 2,
 };
 
-const PostModal = ({ open, onClose, title }) => {
+const PostModal = ({ open, onClose, title, onPostSuccess }) => {
   const { handleSubmit, control, reset } = useForm({
     defaultValues: {
       content: "",
@@ -37,6 +38,10 @@ const PostModal = ({ open, onClose, title }) => {
       const newData = await changeImageType(data);
       const result = await postArticle(newData);
       console.log("result: ", result);
+      if (result.success) {
+        toast.success(result.message);
+        onPostSuccess(); // Gọi callback để thông báo đăng bài thành công
+      }
       reset();
       onClose();
     } catch (err) {

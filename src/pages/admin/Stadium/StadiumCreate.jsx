@@ -295,7 +295,7 @@ export default function StadiumCreate() {
               variant="contained"
               className="border-[#2555a8] border-[2px] text-white w-full"
             >
-              Save Data
+              Lưu thông tin
             </Button>
           </form>
         </Paper>

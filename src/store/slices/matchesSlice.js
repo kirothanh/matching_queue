@@ -11,6 +11,7 @@ const initialState = {
 const getMatches = createAsyncThunk("matches/getMatches", async () => {
   try {
     const res = await authorizedAxiosInstance.get("/matches");
+    console.log('hihi:', res.data.data)
     return res.data.data;
   } catch (error) {
     console.error(error);
@@ -70,7 +71,7 @@ export const matchesSlice = createSlice({
         state.loading = false;
 
         const newModifiedMatches = {};
-        action.payload.forEach((match) => {
+        action.payload?.forEach((match) => {
           if (!newModifiedMatches[match.matchDate]) {
             newModifiedMatches[match.matchDate] = [match];
           } else {

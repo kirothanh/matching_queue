@@ -4,7 +4,7 @@ import { timeAgo } from "../../utils/formatDate";
 
 export default function NotificationItem({ listNoti }) {
   if (!listNoti.length) {
-    return <div className="text-gray-500 text-center mt-5">No notifications available</div>;
+    return <div className="text-gray-500 text-center mt-5">Không có thông báo nào</div>;
   }
 
   return (

@@ -140,7 +140,7 @@ export default function UserInfo() {
             onClick={handleEdit}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           >
-            Edit
+            Chỉnh sửa
           </button>
         ) : (
           <div className="mt-4">

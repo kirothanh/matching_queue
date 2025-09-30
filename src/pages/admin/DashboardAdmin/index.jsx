@@ -65,12 +65,12 @@ export default function DashboardAdmin() {
             <div className="relative z-10 flex items-center justify-between w-full">
               <div className="text-white">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-gray-300">Welcome back</span>
+                  <span className="text-gray-300">Chào mừng bạn quay trở lại</span>
                   <span className="text-2xl">👋</span>
                 </div>
                 <h1 className="text-3xl font-bold mb-3">Admin</h1>
                 <p className="text-gray-400 mb-6 max-w-lg">
-                  If you want to search for a football match, please register as a user.
+                  Nếu bạn muốn tìm kiếm trận đấu bóng đá, vui lòng đăng ký làm người dùng.
                 </p>
               </div>
 
